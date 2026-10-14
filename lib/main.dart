@@ -1,7 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nfc_manager/nfc_manager.dart';
+
+// Tracking the availability of the NFC
+bool isNFCAvailable = false;
 
 void main() {
+  // Ensuring binding is initialized before the app is ran
+  // (idk what this actually does: StackOverflow just said it fixed binding errors I was getting)
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Ensuring the device works with NFC
+  NfcManager.instance.checkAvailability().then((NfcAvailability avail) {
+    if (avail == NfcAvailability.enabled) {
+      isNFCAvailable = true;
+    } else {
+      print("failed to access NFC");
+    }
+  });
+
+  // Creating the root Widget
   runApp(NFCApp());
 }
 
@@ -69,8 +87,34 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void _scanTag() {
-    setState(() {});
+  // TODO: the following 3 methods should be placed in their own file as the NFC pipeline
+
+  // Handles end user scan of an NFC tag
+  void _scanTag() async {
+    NfcManager.instance.startSession(
+      pollingOptions: {
+        NfcPollingOption.iso14443,
+      }, 
+      onDiscovered: (NfcTag tag) async {
+        print(tag);
+
+        _verifyTag();
+
+        // Stop the session when no longer needed.
+        await NfcManager.instance.stopSession();
+      },
+    );
+  }
+
+  // Verifies that the NFC is in the DB
+  void _verifyTag() async {
+    // STUB
+  }
+
+  // Displays a verified and scanned NFC tag
+  void _displayTag() {
+    // STUB
+    // Idk, there gotta be some way to pass a widget back into the widget tree
   }
 
   @override
