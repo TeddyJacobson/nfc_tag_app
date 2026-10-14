@@ -68,13 +68,18 @@ class _MainScreenState extends State<MainScreen> {
   bool _showScanButton = true;
   bool _removeScanButton = false;
   bool _showRealScanButton = false;
+  String _mostRecentScan = "MyTags";
 
-  //all the pages in the app
-  final List<Widget> _pages = [
-    Center(child: Text('Leaderboard', style: GoogleFonts.huninn(fontSize: 24))),
-    Center(child: Text('Scan Tag', style: GoogleFonts.huninn(fontSize: 24))),
-    Center(child: Text('My Tags', style: GoogleFonts.huninn(fontSize: 24))),
-  ];
+
+  Widget getPage(int index){
+      //all the pages in the app
+    final List<Widget> _pages = [
+      Center(child: Text('Leaderboard', style: GoogleFonts.huninn(fontSize: 24))),
+      Center(child: Text('Scan Tag', style: GoogleFonts.huninn(fontSize: 24))),
+      Center(child: Text(_mostRecentScan, style: GoogleFonts.huninn(fontSize: 24))),
+    ];
+    return _pages[index];
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -114,7 +119,7 @@ class _MainScreenState extends State<MainScreen> {
           print('THE TAG WAS SCANNED WITH: $tagID');
           // RAND SHOWN BEHAVIOR:
           setState(() {
-            _currentIndex = 0;
+            _mostRecentScan = tagID;
           });
 
           _verifyTag();
@@ -146,7 +151,7 @@ class _MainScreenState extends State<MainScreen> {
       body: Stack(
         alignment: Alignment.center,
         children: [
-          _pages[_currentIndex],
+          getPage(_currentIndex),
 
           if (_currentIndex == 1 && _showRealScanButton)
             Center(
