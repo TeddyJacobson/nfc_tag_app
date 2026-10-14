@@ -104,12 +104,19 @@ class _MainScreenState extends State<MainScreen> {
         if (nDefRecords != null) {
           // SUCCESS
           String tagID = "";
+
           // Start reading message at 3 cause NFC adds extra letters
           for (int i = 3; i < nDefRecords[0].payload.length; i++) {
             int uniCode = nDefRecords[0].payload[i];
             tagID += String.fromCharCode(uniCode);
           }
+
           print('THE TAG WAS SCANNED WITH: $tagID');
+          // RAND SHOWN BEHAVIOR:
+          setState(() {
+            _currentIndex = 0;
+          });
+
           _verifyTag();
         } else {
           // FAILED
