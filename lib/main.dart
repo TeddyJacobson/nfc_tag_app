@@ -68,15 +68,15 @@ class _MainScreenState extends State<MainScreen> {
   bool _showScanButton = true;
   bool _removeScanButton = false;
   bool _showRealScanButton = false;
-  String _mostRecentScan = "MyTags";
+  String _mostRecentScan = 'Scan Tag';
 
-
+  // Note: this was changed to a func so that I could adjust My Tags for the pres
   Widget getPage(int index){
       //all the pages in the app
     final List<Widget> _pages = [
       Center(child: Text('Leaderboard', style: GoogleFonts.huninn(fontSize: 24))),
-      Center(child: Text('Scan Tag', style: GoogleFonts.huninn(fontSize: 24))),
       Center(child: Text(_mostRecentScan, style: GoogleFonts.huninn(fontSize: 24))),
+      Center(child: Text('My Tags', style: GoogleFonts.huninn(fontSize: 24))),
     ];
     return _pages[index];
   }
