@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nfc_manager/ndef_record.dart';
 import 'package:nfc_manager/nfc_manager.dart';
+import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
 
 // Tracking the availability of the NFC
 bool isNFCAvailable = false;
@@ -92,13 +94,27 @@ class _MainScreenState extends State<MainScreen> {
   // Handles end user scan of an NFC tag
   void _scanTag() async {
     NfcManager.instance.startSession(
-      pollingOptions: {
-        NfcPollingOption.iso14443,
-      }, 
+      pollingOptions: {NfcPollingOption.iso14443},
       onDiscovered: (NfcTag tag) async {
-        print(tag);
+        // Get the text stored within the tag
+        final List<NdefRecord>? nDefRecords = Ndef.from(tag)!
+            .cachedMessage!
+            .records;
 
-        _verifyTag();
+        if (nDefRecords != null) {
+          // SUCCESS
+          String tagID = "";
+          // Start reading message at 3 cause NFC adds extra letters
+          for (int i = 3; i < nDefRecords[0].payload.length; i++) {
+            int uniCode = nDefRecords[0].payload[i];
+            tagID += String.fromCharCode(uniCode);
+          }
+          print('THE TAG WAS SCANNED WITH: $tagID');
+          _verifyTag();
+        } else {
+          // FAILED
+          print("null");
+        }
 
         // Stop the session when no longer needed.
         await NfcManager.instance.stopSession();
