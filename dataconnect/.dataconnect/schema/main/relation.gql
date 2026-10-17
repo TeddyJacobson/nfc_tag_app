@@ -1,0 +1,128 @@
+extend type Tag {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Tag", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Tag` table.
+  """
+  _count: Int! @fdc_generated(from: "Tag.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Tag` table where the `creationTimestamp` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  creationTimestamp_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Tag.creationTimestamp", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Tag` table where the `description` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  description_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Tag.description", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Tag` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Tag.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Tag` table where the `latitude` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  latitude_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Tag.latitude", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Tag` table where the `longitude` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  longitude_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Tag.longitude", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Tag` table where the `title` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  title_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Tag.title", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `latitude` field in the `Tag` table.
+  """
+  latitude_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Tag.latitude", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `longitude` field in the `Tag` table.
+  """
+  longitude_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Tag.longitude", purpose: QUERY_SUM)
+  """
+  ✨ Average the `latitude` field in the `Tag` table.
+  """
+  latitude_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Tag.latitude", purpose: QUERY_AVG)
+  """
+  ✨ Average the `longitude` field in the `Tag` table.
+  """
+  longitude_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Tag.longitude", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `creationTimestamp` field in the `Tag` table.
+  """
+  creationTimestamp_min: Timestamp @fdc_generated(from: "Tag.creationTimestamp", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `latitude` field in the `Tag` table.
+  """
+  latitude_min: Float @fdc_generated(from: "Tag.latitude", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `longitude` field in the `Tag` table.
+  """
+  longitude_min: Float @fdc_generated(from: "Tag.longitude", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `creationTimestamp` field in the `Tag` table.
+  """
+  creationTimestamp_max: Timestamp @fdc_generated(from: "Tag.creationTimestamp", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `latitude` field in the `Tag` table.
+  """
+  latitude_max: Float @fdc_generated(from: "Tag.latitude", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `longitude` field in the `Tag` table.
+  """
+  longitude_max: Float @fdc_generated(from: "Tag.longitude", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Tag.id", purpose: ENTITY_ID)
+}

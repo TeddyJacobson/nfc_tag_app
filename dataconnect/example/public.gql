@@ -1,0 +1,14 @@
+query GetTagById($key: Tag_Key!)
+@auth(
+  level: PUBLIC
+  insecureReason: "Anyone can request tag information given the associated ID."
+) {
+  tag(key: $key) {
+    id
+    latitude
+    longitude
+    title
+    description
+    creationTimestamp
+  }
+}

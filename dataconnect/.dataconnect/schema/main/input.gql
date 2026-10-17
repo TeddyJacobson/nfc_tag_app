@@ -1,0 +1,341 @@
+"""
+✨ `Tag_KeyOutput` returns the primary key fields of table type `Tag`.
+
+It has the same format as `Tag_Key`, but is only used as mutation return value.
+"""
+scalar Tag_KeyOutput
+"""
+✨ Generated data input type for table 'Tag'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Tag_Data {
+  """
+  ✨ Generated from Field `Tag`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Tag`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Tag`.`creationTimestamp` of type `Timestamp!`
+  """
+  creationTimestamp: Timestamp
+  """
+  ✨ `_expr` server value variant of `creationTimestamp` (✨ Generated from Field `Tag`.`creationTimestamp` of type `Timestamp!`)
+  """
+  creationTimestamp_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `creationTimestamp` (✨ Generated from Field `Tag`.`creationTimestamp` of type `Timestamp!`)
+  """
+  creationTimestamp_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `creationTimestamp` (✨ Generated from Field `Tag`.`creationTimestamp` of type `Timestamp!`)
+  """
+  creationTimestamp_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Tag`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `Tag`.`description` of type `String`)
+  """
+  description_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Tag`.`latitude` of type `Float!`
+  """
+  latitude: Float
+  """
+  ✨ `_expr` server value variant of `latitude` (✨ Generated from Field `Tag`.`latitude` of type `Float!`)
+  """
+  latitude_expr: Float_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `latitude` (✨ Generated from Field `Tag`.`latitude` of type `Float!`)
+  """
+  latitude_update: [Float_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Tag`.`longitude` of type `Float!`
+  """
+  longitude: Float
+  """
+  ✨ `_expr` server value variant of `longitude` (✨ Generated from Field `Tag`.`longitude` of type `Float!`)
+  """
+  longitude_expr: Float_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `longitude` (✨ Generated from Field `Tag`.`longitude` of type `Float!`)
+  """
+  longitude_update: [Float_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Tag`.`title` of type `String!`
+  """
+  title: String
+  """
+  ✨ `_expr` server value variant of `title` (✨ Generated from Field `Tag`.`title` of type `String!`)
+  """
+  title_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated filter input type for table 'Tag'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Tag_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Tag_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Tag_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Tag_Filter!]
+  """
+  ✨ Generated from Field `Tag`.`id` of type `String!`
+  """
+  id: String_Filter
+  """
+  ✨ Generated from Field `Tag`.`creationTimestamp` of type `Timestamp!`
+  """
+  creationTimestamp: Timestamp_Filter
+  """
+  ✨ Generated from Field `Tag`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `Tag`.`latitude` of type `Float!`
+  """
+  latitude: Float_Filter
+  """
+  ✨ Generated from Field `Tag`.`longitude` of type `Float!`
+  """
+  longitude: Float_Filter
+  """
+  ✨ Generated from Field `Tag`.`title` of type `String!`
+  """
+  title: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'Tag'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Tag_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Tag_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Tag_Filter
+}
+"""
+✨ Generated having input type for table 'Tag'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Tag_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Tag_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Tag_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Tag_Having!]
+  """
+  ✨ Generated from Field `Tag`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Tag`.`creationTimestamp_count` of type `Int!`
+  """
+  creationTimestamp_count: Int_Filter
+  """
+  ✨ Generated from Field `Tag`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `Tag`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Tag`.`latitude_count` of type `Int!`
+  """
+  latitude_count: Int_Filter
+  """
+  ✨ Generated from Field `Tag`.`longitude_count` of type `Int!`
+  """
+  longitude_count: Int_Filter
+  """
+  ✨ Generated from Field `Tag`.`title_count` of type `Int!`
+  """
+  title_count: Int_Filter
+  """
+  ✨ Generated from Field `Tag`.`latitude_sum` of type `Float`
+  """
+  latitude_sum: Float_Filter
+  """
+  ✨ Generated from Field `Tag`.`longitude_sum` of type `Float`
+  """
+  longitude_sum: Float_Filter
+  """
+  ✨ Generated from Field `Tag`.`latitude_avg` of type `Float`
+  """
+  latitude_avg: Float_Filter
+  """
+  ✨ Generated from Field `Tag`.`longitude_avg` of type `Float`
+  """
+  longitude_avg: Float_Filter
+  """
+  ✨ Generated from Field `Tag`.`creationTimestamp_min` of type `Timestamp`
+  """
+  creationTimestamp_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Tag`.`latitude_min` of type `Float`
+  """
+  latitude_min: Float_Filter
+  """
+  ✨ Generated from Field `Tag`.`longitude_min` of type `Float`
+  """
+  longitude_min: Float_Filter
+  """
+  ✨ Generated from Field `Tag`.`creationTimestamp_max` of type `Timestamp`
+  """
+  creationTimestamp_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Tag`.`latitude_max` of type `Float`
+  """
+  latitude_max: Float_Filter
+  """
+  ✨ Generated from Field `Tag`.`longitude_max` of type `Float`
+  """
+  longitude_max: Float_Filter
+}
+"""
+✨ Generated key input type for table 'Tag'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Tag_Key {
+  """
+  ✨ Generated from Field `Tag`.`id` of type `String!`
+  """
+  id: String
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Tag`.`id` of type `String!`)
+  """
+  id_expr: String_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'Tag'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Tag_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Tag_Filter
+}
+"""
+✨ Generated order input type for table 'Tag'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Tag_Order {
+  """
+  ✨ Generated from Field `Tag`.`id` of type `String!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`creationTimestamp` of type `Timestamp!`
+  """
+  creationTimestamp: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`latitude` of type `Float!`
+  """
+  latitude: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`longitude` of type `Float!`
+  """
+  longitude: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`title` of type `String!`
+  """
+  title: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`creationTimestamp_count` of type `Int!`
+  """
+  creationTimestamp_count: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`latitude_count` of type `Int!`
+  """
+  latitude_count: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`longitude_count` of type `Int!`
+  """
+  longitude_count: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`title_count` of type `Int!`
+  """
+  title_count: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`latitude_sum` of type `Float`
+  """
+  latitude_sum: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`longitude_sum` of type `Float`
+  """
+  longitude_sum: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`latitude_avg` of type `Float`
+  """
+  latitude_avg: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`longitude_avg` of type `Float`
+  """
+  longitude_avg: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`creationTimestamp_min` of type `Timestamp`
+  """
+  creationTimestamp_min: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`latitude_min` of type `Float`
+  """
+  latitude_min: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`longitude_min` of type `Float`
+  """
+  longitude_min: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`creationTimestamp_max` of type `Timestamp`
+  """
+  creationTimestamp_max: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`latitude_max` of type `Float`
+  """
+  latitude_max: OrderDirection
+  """
+  ✨ Generated from Field `Tag`.`longitude_max` of type `Float`
+  """
+  longitude_max: OrderDirection
+}
