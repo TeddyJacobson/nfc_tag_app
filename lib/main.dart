@@ -48,6 +48,7 @@ class _MainScreenState extends State<MainScreen> {
   bool _showScanButton = true;
   bool _removeScanButton = false;
   bool _showRealScanButton = false;
+  bool _currentlyScanning = false;
 
   //all the pages in the app
   final List<Widget> _pages = [
@@ -60,9 +61,9 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _currentIndex = index; //the index of what page the user is looking at
       if (_currentIndex != 1) {
+        _showScanButton = true;
         _scanButtonHovered = false;
         _scanButtonPressed = false;
-        _showScanButton = true;
         _removeScanButton = false;
         _showRealScanButton = false;
       }
@@ -70,7 +71,33 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _scanTag() {
-    setState(() {});
+    setState(() {
+      _currentlyScanning = true;
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Currently Scanning'),
+            // content: const Text('Scannning...'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop(); // Closes the popup
+                  _cancelScanning();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    });
+  }
+
+  void _cancelScanning() {
+    setState(() {
+      _currentlyScanning = false;
+    });
   }
 
   @override
