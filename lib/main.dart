@@ -1,8 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nfc_manager/ndef_record.dart';
+import 'package:nfc_manager/nfc_manager.dart';
+import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
+
 
 void main() {
-  runApp(NFCApp());
+  // Ensuring binding is initialized before the app is ran
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Starting an NFC session
+  NfcManager.instance.checkAvailability().then((NfcAvailability avail) {
+    // Handling NFC scans
+    NfcManager.instance.startSession(
+      pollingOptions: {NfcPollingOption.iso14443},
+      onDiscovered: _handleTagInfo,
+    );
+
+    // Running the app
+    runApp(NFCApp());
+  });
+
+  //TODO: the session needs to end at some point... maybe when app is paused/stopped?
+}
+
+void _handleTagInfo(NfcTag tag) async {
+  // Get the text stored within the tag
+  final List<NdefRecord>? nDefRecords = Ndef.from(tag)!.cachedMessage!.records;
+
+  if (nDefRecords != null) {
+    // SUCCESS
+    String tagID = "";
+
+    // Start reading message at 3 cause NFC adds extra letters
+    for (int i = 3; i < nDefRecords[0].payload.length; i++) {
+      int uniCode = nDefRecords[0].payload[i];
+      tagID += String.fromCharCode(uniCode);
+    }
+
+    //TODO: only scan when button is open
+
+    //TODO: provide popup when invalid scan occurs
+
+    //TODO: Delete this
+    print('$tagID');
+
+    // TODO: send tagID off to be verified
+  } else {
+    // FAILED
+  }
 }
 
 class NFCApp extends StatelessWidget {
@@ -71,6 +117,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _scanTag() {
+    // Provide the UI for the user to see the popup
     setState(() {
       _currentlyScanning = true;
       showDialog(
