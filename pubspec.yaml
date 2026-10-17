@@ -35,6 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   google_fonts: ^9.0.0
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -49,6 +50,12 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
+# Flutter icon info
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/Logo.png"
 
 # The following section is specific to Flutter packages.
 flutter:
