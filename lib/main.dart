@@ -4,10 +4,17 @@ import 'package:nfc_manager/ndef_record.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
 
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+import 'database_functions.dart';
+
+void main() async {
   // Ensuring binding is initialized before the app is ran
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Starting an NFC session
   NfcManager.instance.checkAvailability().then((NfcAvailability avail) {
