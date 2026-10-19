@@ -1,0 +1,37 @@
+mutation CreateTag(
+  $latitude: Float!
+  $longitude: Float!
+  $title: String!
+  $description: String
+) @auth(level: NO_ACCESS) {
+  tag_insert(
+    data: {
+      latitude: $latitude
+      longitude: $longitude
+      title: $title
+      description: $description
+    }
+  )
+}
+
+mutation CreateTestTag @auth(level: NO_ACCESS) {
+  tag_insert(
+    data: {
+      latitude: 0.0
+      longitude: 0.0
+      title: "Test"
+      description: "A testing location in the Atlantic."
+    }
+  )
+}
+
+query ListTags @auth(level: NO_ACCESS) {
+  tags {
+    id
+    latitude
+    longitude
+    title
+    description
+    creationTimestamp
+  }
+}

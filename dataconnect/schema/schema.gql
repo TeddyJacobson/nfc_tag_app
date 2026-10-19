@@ -1,0 +1,8 @@
+type Tag @table(key: "id") {
+  id: String! @col(name: "tag_id") @default(expr: "uuidV4()")
+  latitude: Float!
+  longitude: Float!
+  title: String!
+  description: String
+  creationTimestamp: Timestamp! @default(expr: "request.time")
+}

@@ -1,0 +1,33 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "nfc-scavenger-hunt",
+          "appId": "1:1078570503175:android:97f4f9d1e3cd8ff6aa6ea2",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "nfc-scavenger-hunt",
+          "configurations": {
+            "android": "1:1078570503175:android:97f4f9d1e3cd8ff6aa6ea2",
+            "ios": "1:1078570503175:ios:16fa75c0556799d5aa6ea2",
+            "macos": "1:1078570503175:ios:16fa75c0556799d5aa6ea2",
+            "web": "1:1078570503175:web:145bf6494b71d550aa6ea2",
+            "windows": "1:1078570503175:web:0a1d2e4c020182d5aa6ea2"
+          }
+        }
+      }
+    }
+  },
+  "emulators": {
+    "dataconnect": {
+      "dataDir": "dataconnect/.dataconnect/pgliteData"
+    }
+  },
+  "dataconnect": {
+    "source": "dataconnect"
+  }
+}
