@@ -54,8 +54,8 @@ void _handleTagInfo(NfcTag tag) async {
 
     // TODO: Verify tag is 32 hex digits before looking up
     // TODO: Try catch for tag does not exist
-    final tag_data = await getTagById(tagID);
-    print(tag_data.toJson());
+    //final tag_data = await getTagById(tagID);
+    //print(tag_data.toJson());
 
     // TODO: send tagID off to be verified
   } else {
