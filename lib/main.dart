@@ -4,7 +4,6 @@ import 'package:nfc_manager/ndef_record.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
 
-
 void main() {
   // Ensuring binding is initialized before the app is ran
   WidgetsFlutterBinding.ensureInitialized();
