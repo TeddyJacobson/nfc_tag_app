@@ -199,6 +199,7 @@ class _MainScreenState extends State<MainScreen> {
             IconButton(
               icon: Icon(Icons.leaderboard, size: 28),
               onPressed: () => _onItemTapped(0),
+              color: _currentIndex == 0 ? Colors.teal : Colors.grey,
             ),
             SizedBox(
               width: 40,
@@ -206,6 +207,7 @@ class _MainScreenState extends State<MainScreen> {
             IconButton(
               icon: Icon(Icons.style, size: 28),
               onPressed: () => _onItemTapped(2),
+              color: _currentIndex == 2 ? Colors.teal : Colors.grey,
             ),
             //possible icons we might wanna use: collections, bookmarks, edit_square, hourglass, label, library books, loyalty, local_offer,
             // map, more_outlined, qr_code, report, sell, sensors, style
