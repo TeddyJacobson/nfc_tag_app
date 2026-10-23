@@ -47,19 +47,24 @@ void _handleTagInfo(NfcTag tag) async {
       tagID += String.fromCharCode(uniCode);
     }
 
-    //TODO: only scan when button is open
-
-    //TODO: provide popup when invalid scan occurs
-
-    //TODO: Delete this
+    // TODO: Delete this
     print('$tagID');
 
-    // TODO: Verify tag is 32 hex digits before looking up
-    // TODO: Try catch for tag does not exist
-    //final tag_data = await getTagById(tagID);
-    //print(tag_data.toJson());
+    // Verify tag is 32 hex digits before looking up
+    if (isTagIdFormatValid(tagID)) {
+      // TODO: IF in scanning screen
+        // TODO: Try-catch if the ID is not found
+        final tag_data = await getTagById(tagID);
+        print(tag_data.toJson());
+        // TODO: Display tag information
+      // ELSE
+        // TODO: Advise the user that they should use the scan tag tab and button
+    }
+    // Tag ID wasn't valid
+    else {
+      // TODO: provide popup when invalid scan occurs
+    }
 
-    // TODO: send tagID off to be verified
   } else {
     // FAILED
   }

@@ -1,5 +1,9 @@
 import 'dataconnect_generated/generated.dart';
 
+import 'package:string_validator/string_validator.dart';
+
+const _tagIdLength = 32;
+
 Future<GetTagByIdTag> getTagById(String id) async {
   final key = GetTagByIdVariablesKey(id: id);
 
@@ -13,6 +17,10 @@ Future<GetTagByIdTag> getTagById(String id) async {
   }
 
   return tagData;
+}
+
+bool isTagIdFormatValid(String id) {
+  return id.length == _tagIdLength && isHexadecimal(id);
 }
 
 Future<void> getExampleTag() async {
