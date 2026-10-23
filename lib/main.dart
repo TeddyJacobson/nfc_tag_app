@@ -48,14 +48,14 @@ void _handleTagInfo(NfcTag tag) async {
     }
 
     // TODO: Delete this
-    print('$tagID');
+    print(tagID);
 
     // Verify tag is 32 hex digits before looking up
     if (isTagIdFormatValid(tagID)) {
       // TODO: IF in scanning screen
         try {
-          final tag_data = await getTagById(tagID);
-          print(tag_data.toJson());
+          final tagData = await getTagById(tagID);
+          print(tagData.toJson());
         }
         on IdNotFoundException catch (e) {
           print(e); // TODO: Display a tag ID not found popup
