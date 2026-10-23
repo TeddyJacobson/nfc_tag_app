@@ -7,6 +7,7 @@ import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+
 import 'firebase_options.dart';
 import 'database_functions.dart';
 
@@ -53,22 +54,20 @@ void _handleTagInfo(NfcTag tag) async {
     // Verify tag is 32 hex digits before looking up
     if (isTagIdFormatValid(tagID)) {
       // TODO: IF in scanning screen
-        try {
-          final tagData = await getTagById(tagID);
-          print(tagData.toJson());
-        }
-        on IdNotFoundException catch (e) {
-          print(e); // TODO: Display a tag ID not found popup
-        }
-        // TODO: Display tag information
+      try {
+        final tagData = await getTagById(tagID);
+        print(tagData.toJson());
+      } on IdNotFoundException catch (e) {
+        print(e); // TODO: Display a tag ID not found popup
+      }
+      // TODO: Display tag information
       // ELSE
-        // TODO: Advise the user that they should use the scan tag tab and button
+      // TODO: Advise the user that they should use the scan tag tab and button
     }
     // Tag ID wasn't valid
     else {
       // TODO: provide popup when invalid scan occurs
     }
-
   } else {
     // FAILED
   }
@@ -211,6 +210,7 @@ class _MainScreenState extends State<MainScreen> {
             IconButton(
               icon: Icon(Icons.leaderboard, size: 28),
               onPressed: () => _onItemTapped(0),
+              color: _currentIndex == 0 ? Colors.teal : Colors.grey,
             ),
             SizedBox(
               width: 40,
@@ -218,6 +218,7 @@ class _MainScreenState extends State<MainScreen> {
             IconButton(
               icon: Icon(Icons.style, size: 28),
               onPressed: () => _onItemTapped(2),
+              color: _currentIndex == 2 ? Colors.teal : Colors.grey,
             ),
             //possible icons we might wanna use: collections, bookmarks, edit_square, hourglass, label, library books, loyalty, local_offer,
             // map, more_outlined, qr_code, report, sell, sensors, style
