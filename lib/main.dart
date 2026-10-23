@@ -53,9 +53,13 @@ void _handleTagInfo(NfcTag tag) async {
     // Verify tag is 32 hex digits before looking up
     if (isTagIdFormatValid(tagID)) {
       // TODO: IF in scanning screen
-        // TODO: Try-catch if the ID is not found
-        final tag_data = await getTagById(tagID);
-        print(tag_data.toJson());
+        try {
+          final tag_data = await getTagById(tagID);
+          print(tag_data.toJson());
+        }
+        on IdNotFoundException catch (e) {
+          print(e); // TODO: Display a tag ID not found popup
+        }
         // TODO: Display tag information
       // ELSE
         // TODO: Advise the user that they should use the scan tag tab and button

@@ -6,6 +6,18 @@ import 'package:string_validator/string_validator.dart';
 const _tagIdLength = 32;
 
 
+class IdNotFoundException implements Exception {
+  final String? message;
+
+  const IdNotFoundException(this.message);
+
+  @override
+  String toString() {
+    return 'TagNotFoundException: $message';
+  }
+}
+
+
 /// Returns backend tag data associated with a given tag id.
 /// 
 /// This function performs a call to the database, and thus it is recommended
@@ -20,8 +32,7 @@ Future<GetTagByIdTag> getTagById(String id) async {
   final tagData = result.data.tag;
 
   if (tagData == null) {
-    // TODO: Throw custom exception type
-    throw Exception("Provided id was not found in database.");
+    throw IdNotFoundException('Provided id is not associated with a tag in database.');
   }
 
   return tagData;
@@ -39,7 +50,7 @@ bool isTagIdFormatValid(String id) {
 
 /// This function queries the backend for a hardcoded test id and prints the tag.
 Future<void> getExampleTag() async {
-  final tag = await getTagById("39749d59b89f46f3b5808c4879f43d53");
-  print("CONNECTED TO FIREBASE:");
+  final tag = await getTagById('39749d59b89f46f3b5808c4879f43d53');
+  print('CONNECTED TO FIREBASE:');
   print(tag.toJson());
 }
