@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+
 import 'package:google_fonts/google_fonts.dart';
+
 import 'package:nfc_manager/ndef_record.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
 
 import 'package:firebase_core/firebase_core.dart';
-
 import 'firebase_options.dart';
-
 import 'database_functions.dart';
+
+import 'lifecycle_handler.dart';
 
 void main() async {
   // Ensuring binding is initialized before the app is ran
@@ -165,6 +167,7 @@ class _MainScreenState extends State<MainScreen> {
       body: Stack(
         alignment: Alignment.center,
         children: [
+          LifecycleHandler(handleScan: _handleTagInfo),
           _pages[_currentIndex],
 
           if (_currentIndex == 1 && _showRealScanButton)
