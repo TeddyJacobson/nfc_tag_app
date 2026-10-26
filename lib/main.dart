@@ -9,6 +9,7 @@ import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:nfc_tap_app/dataconnect_generated/generated.dart';
 
 import 'firebase_options.dart';
 import 'database_functions.dart';
@@ -63,9 +64,9 @@ void _handleTagInfo(NfcTag tag) async {
       try {
         final tagData = await getTagById(tagID);
         final context = navigatorKey.currentContext;
-        if (context == null) return;
-        _showScannedTagDetails(tagData.toJson(), context);
-        print(tagData.toJson());
+        if (context != null && context.mounted) {
+          _showScannedTagDetails(tagData, context);
+        }
       } on IdNotFoundException catch (e) {
         print(e); // TODO: Display a tag ID not found popup
       }
@@ -83,7 +84,7 @@ void _handleTagInfo(NfcTag tag) async {
 }
 
 void _showScannedTagDetails(
-  Map<String, dynamic> tagDetails,
+  GetTagByIdTag tagDetails,
   BuildContext context,
 ) {
   showDialog(
@@ -97,7 +98,7 @@ void _showScannedTagDetails(
           width: 300,
           height: 500,
           child: Text(
-            'ID: ${tagDetails['id']}, Latitude: ${tagDetails['latitude']}, Longitude: ${tagDetails['longitude']}, Title: ${tagDetails['title']}, Description: ${tagDetails['description']}, Creation Timestamp: ${tagDetails['creationTimestamp']}',
+            'ID: ${tagDetails.id}, Latitude: ${tagDetails.latitude}, Longitude: ${tagDetails.longitude}, Title: ${tagDetails.title}, Description: ${tagDetails.description}, Creation Timestamp: ${tagDetails.creationTimestamp}',
           ),
         ),
         actions: [
