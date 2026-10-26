@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +15,10 @@ import 'database_functions.dart';
 
 import 'lifecycle_handler.dart';
 
+NFCApp _nfcApp = NFCApp();
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+String testTag =
+    '{"id":"abc123","latitude":42.2917,"longitude":-85.5872,"title":"Test Tag Location","description":"Test tag description goes here","creationTimestamp":"2026-10-26T13:00:00.000"}';
 void main() async {
   // Ensuring binding is initialized before the app is ran
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +34,7 @@ void main() async {
     );
 
     // Running the app
-    runApp(NFCApp());
+    runApp(_nfcApp);
   });
 
   //TODO: the session needs to end at some point... maybe when app is paused/stopped?
@@ -56,6 +62,9 @@ void _handleTagInfo(NfcTag tag) async {
       // TODO: IF in scanning screen
       try {
         final tagData = await getTagById(tagID);
+        final context = navigatorKey.currentContext;
+        if (context == null) return;
+        _showScannedTagDetails(tagData.toJson(), context);
         print(tagData.toJson());
       } on IdNotFoundException catch (e) {
         print(e); // TODO: Display a tag ID not found popup
@@ -73,32 +82,63 @@ void _handleTagInfo(NfcTag tag) async {
   }
 }
 
+void _showScannedTagDetails(
+  Map<String, dynamic> tagDetails,
+  BuildContext context,
+) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Center(
+          child: Text('Tag Details', style: GoogleFonts.huninn(fontSize: 24)),
+        ),
+        content: SizedBox(
+          width: 300,
+          height: 500,
+          child: Text(
+            'ID: ${tagDetails['id']}, Latitude: ${tagDetails['latitude']}, Longitude: ${tagDetails['longitude']}, Title: ${tagDetails['title']}, Description: ${tagDetails['description']}, Creation Timestamp: ${tagDetails['creationTimestamp']}',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Close'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 class NFCApp extends StatelessWidget {
-  const NFCApp({super.key});
+  NFCApp({super.key});
+  final MaterialApp _materialApp = MaterialApp(
+    title: 'NFC App',
+    //light mode
+    theme: ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: Colors.teal,
+        brightness: Brightness.light,
+      ),
+    ),
+    //dark mode
+    darkTheme: ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: Colors.teal,
+        brightness: Brightness.dark,
+      ),
+    ),
+    themeMode: ThemeMode.system,
+    navigatorKey: navigatorKey,
+    home: const MainScreen(),
+  );
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'NFC App',
-      //light mode
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.teal,
-          brightness: Brightness.light,
-        ),
-      ),
-      //dark mode
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.teal,
-          brightness: Brightness.dark,
-        ),
-      ),
-      themeMode: ThemeMode.system,
-      home: const MainScreen(),
-    );
+    return _materialApp;
   }
 }
 
@@ -117,6 +157,7 @@ class _MainScreenState extends State<MainScreen> {
   bool _removeScanButton = false;
   bool _showRealScanButton = false;
   bool _currentlyScanning = false;
+  bool _displayTagDetails = false;
 
   //all the pages in the app
   final List<Widget> _pages = [
