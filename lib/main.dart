@@ -4,22 +4,25 @@ import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:nfc_manager/ndef_record.dart';
 import 'package:nfc_manager/nfc_manager.dart';
-import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
+
+import 'functionality_handlers/nfc_scan_handler.dart';
+import 'functionality_handlers/lifecycle_handler.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:nfc_tap_app/dataconnect_generated/generated.dart';
 
 import 'firebase_options.dart';
-import 'database_functions.dart';
 
-import 'lifecycle_handler.dart';
 
 NFCApp _nfcApp = NFCApp();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 String testTag =
     '{"id":"abc123","latitude":42.2917,"longitude":-85.5872,"title":"Test Tag Location","description":"Test tag description goes here","creationTimestamp":"2026-10-26T13:00:00.000"}';
+
+// One stop shop for accessing tag info
+final NfcStreamHandler tagInteractionHandler = NfcStreamHandler();
+
 void main() async {
   // Ensuring binding is initialized before the app is ran
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,88 +31,12 @@ void main() async {
 
   // Starting an NFC session
   NfcManager.instance.checkAvailability().then((NfcAvailability avail) {
-    // Handling NFC scans
-    NfcManager.instance.startSession(
-      pollingOptions: {NfcPollingOption.iso14443},
-      onDiscovered: _handleTagInfo,
-    );
+    // All set to start handling tag scans
+    tagInteractionHandler.startSession();
 
     // Running the app
     runApp(_nfcApp);
   });
-
-  //TODO: the session needs to end at some point... maybe when app is paused/stopped?
-}
-
-void _handleTagInfo(NfcTag tag) async {
-  // Get the text stored within the tag
-  final List<NdefRecord>? nDefRecords = Ndef.from(tag)!.cachedMessage!.records;
-
-  if (nDefRecords != null) {
-    // SUCCESS
-    String tagID = "";
-
-    // Start reading message at 3 cause NFC adds extra letters
-    for (int i = 3; i < nDefRecords[0].payload.length; i++) {
-      int uniCode = nDefRecords[0].payload[i];
-      tagID += String.fromCharCode(uniCode);
-    }
-
-    // TODO: Delete this
-    print(tagID);
-
-    // Verify tag is 32 hex digits before looking up
-    if (isTagIdFormatValid(tagID)) {
-      // TODO: IF in scanning screen
-      try {
-        final tagData = await getTagById(tagID);
-        final context = navigatorKey.currentContext;
-        if (context != null && context.mounted) {
-          _showScannedTagDetails(tagData, context);
-        }
-      } on IdNotFoundException catch (e) {
-        print(e); // TODO: Display a tag ID not found popup
-      }
-      // TODO: Display tag information
-      // ELSE
-      // TODO: Advise the user that they should use the scan tag tab and button
-    }
-    // Tag ID wasn't valid
-    else {
-      // TODO: provide popup when invalid scan occurs
-    }
-  } else {
-    // FAILED
-  }
-}
-
-void _showScannedTagDetails(
-  GetTagByIdTag tagDetails,
-  BuildContext context,
-) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Center(
-          child: Text('Tag Details', style: GoogleFonts.huninn(fontSize: 24)),
-        ),
-        content: SizedBox(
-          width: 300,
-          height: 500,
-          child: Text(
-            'ID: ${tagDetails.id}, Latitude: ${tagDetails.latitude}, Longitude: ${tagDetails.longitude}, Title: ${tagDetails.title}, Description: ${tagDetails.description}, Creation Timestamp: ${tagDetails.creationTimestamp}',
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Close'),
-          ),
-        ],
-      );
-    },
-  );
 }
 
 class NFCApp extends StatelessWidget {
@@ -158,7 +85,9 @@ class _MainScreenState extends State<MainScreen> {
   bool _removeScanButton = false;
   bool _showRealScanButton = false;
   bool _currentlyScanning = false;
-  bool _displayTagDetails = false;
+  TagResponse? _currentlyHeldTag = TagResponse(null, null);
+  bool _currentlyDisplayed = false;
+  bool _showDialog = true;
 
   //all the pages in the app
   final List<Widget> _pages = [
@@ -205,6 +134,74 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  void _showScannedTagDetails(TagResponse tagRes, BuildContext context) {
+    // The user scanned a tag when they were suppose to
+    if (tagRes.tagInfo != null) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Center(
+              child: Text(
+                'Tag Details',
+                style: GoogleFonts.huninn(fontSize: 24),
+              ),
+            ),
+            content: SizedBox(
+              width: 300,
+              height: 500,
+              child: Text(
+                // TODO: Ideally, this won't just have Text for this option
+                'ID: ${tagRes.tagInfo!.id}, Latitude: ${tagRes.tagInfo!.latitude}, Longitude: ${tagRes.tagInfo!.longitude}, Title: ${tagRes.tagInfo!.title}, Description: ${tagRes.tagInfo!.description}, Creation Timestamp: ${tagRes.tagInfo!.creationTimestamp}',
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  _showDialog = false;
+                  _currentlyDisplayed = false;
+                  Navigator.of(context).pop();
+                },
+                child: Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+    // Handling all the other invalid popups
+    else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Center(
+              child: Text(
+                'Tag Details',
+                style: GoogleFonts.huninn(fontSize: 24),
+              ),
+            ),
+            content: SizedBox(
+              width: 300,
+              height: 500,
+              child: Text('${tagRes.message}'),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  _showDialog = false;
+                  _currentlyDisplayed = false;
+                  Navigator.of(context).pop();
+                },
+                child: Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
   void _cancelScanning() {
     setState(() {
       _currentlyScanning = false;
@@ -217,7 +214,32 @@ class _MainScreenState extends State<MainScreen> {
       body: Stack(
         alignment: Alignment.center,
         children: [
-          LifecycleHandler(handleScan: _handleTagInfo),
+          StreamBuilder(
+            stream: tagInteractionHandler.stream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.waiting &&
+                  snapshot.connectionState != ConnectionState.none) {
+                if (_currentlyHeldTag != snapshot.data) {
+                  _showDialog = true;
+                  _currentlyHeldTag = snapshot.data;
+                }
+
+                if (_showDialog && !_currentlyDisplayed) {
+                  _currentlyDisplayed = true;
+                  // Due to the terrible nature of ShowDialog, scheduling a dialog popup
+                  // after the current frame is drawn
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _showScannedTagDetails(_currentlyHeldTag!, context);
+                  });
+                }
+              }
+              // Satisfying the Flutter Build conditions
+              return Opacity(opacity: 0);
+            },
+          ),
+
+          LifecycleHandler(tagStreamHandler: tagInteractionHandler),
+
           _pages[_currentIndex],
 
           if (_currentIndex == 1 && _showRealScanButton)

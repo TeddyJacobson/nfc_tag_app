@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 
-import 'package:nfc_manager/nfc_manager.dart';
+import 'nfc_scan_handler.dart';
 
 
 class LifecycleHandler extends StatefulWidget {
   // Flutter got some wacky notation, but here is the props passable in
-  final Function(NfcTag tag) _handleScan;
+  final NfcStreamHandler _tagStreamHandler;
 
   // Requiring the named param of handleScan to be included
-  const LifecycleHandler({super.key, required this._handleScan});
+  const LifecycleHandler({super.key, required this._tagStreamHandler});
 
+  @override
   _LifecycleHandler createState() => _LifecycleHandler();
 }
 
 class _LifecycleHandler extends State<LifecycleHandler>
     with WidgetsBindingObserver {
-  late Function(NfcTag tag) _handleScan;
+  late NfcStreamHandler _tagStreamHandler;
 
   // On the creation of the Main Screen, creates an observer to watch the whole app
   @override
@@ -24,7 +25,7 @@ class _LifecycleHandler extends State<LifecycleHandler>
     super.initState();
 
     // Passing in the handleScan prop
-    _handleScan = widget._handleScan;
+    _tagStreamHandler = widget._tagStreamHandler;
 
     // On the creation of the Main Screen, creates an observer to watch the whole app
     WidgetsBinding.instance.addObserver(this);
@@ -39,7 +40,7 @@ class _LifecycleHandler extends State<LifecycleHandler>
     print("Removed the observer");
 
     // Removing the lifecyle observer to avoid memory leaks
-    // Shouldn't be relevant since the lifecycle widget will 
+    // Shouldn't be relevant since the lifecycle widget will
     // remain in the tree till complete app termination.
     WidgetsBinding.instance.removeObserver(this);
 
@@ -53,18 +54,10 @@ class _LifecycleHandler extends State<LifecycleHandler>
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.resumed) {
-      //TODO: Removed this
-      print("Start session");
-      // App was opened, start a new NFC session
-      NfcManager.instance.startSession(
-        pollingOptions: {NfcPollingOption.iso14443},
-        onDiscovered: _handleScan,
-      );
+      _tagStreamHandler.startSession();
     } else {
-      //TODO: Removed this
-      print("End session");
       // App is closed, end the NFC session
-      NfcManager.instance.stopSession();
+      _tagStreamHandler.endSession();
     }
   }
 
