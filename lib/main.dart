@@ -109,6 +109,7 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  // TODO: Turn all dialog box interactions into a single function in its own file
   void _scanTag() {
     // Provide the UI for the user to see the popup
     setState(() {
@@ -135,6 +136,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _showScannedTagDetails(TagResponse tagRes, BuildContext context) {
+    // Closing the existing popup if it exists
     if(_currentlyScanning){
       Navigator.of(context).pop();
       setState(() {

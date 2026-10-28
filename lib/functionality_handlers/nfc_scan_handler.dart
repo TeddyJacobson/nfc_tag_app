@@ -14,6 +14,7 @@ final String _failToScan = 'This is a placeholder String. The tag failed :)';
 class NfcStreamHandler {
   final controller = StreamController<TagResponse>();
   Stream<TagResponse> get stream => controller.stream;
+  // TODO: This will be used to tell the handler if it cares to search the DB.
   bool scanning = false;
 
   void updateNFCStream(NfcTag tag) async {
