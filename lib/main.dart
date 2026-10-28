@@ -14,7 +14,6 @@ import 'package:nfc_tap_app/dataconnect_generated/generated.dart';
 
 import 'firebase_options.dart';
 
-
 NFCApp _nfcApp = NFCApp();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 String testTag =
@@ -137,12 +136,15 @@ class _MainScreenState extends State<MainScreen> {
 
   void _showScannedTagDetails(TagResponse tagRes, BuildContext context) {
     // Closing the existing popup if it exists
-    if(_currentlyScanning){
+    if (_currentlyScanning) {
       Navigator.of(context).pop();
       setState(() {
         _currentlyScanning = false;
       });
     }
+
+    tagInteractionHandler.scanning = false;
+
     // The user scanned a tag when they were suppose to
     if (tagRes.tagInfo != null) {
       showDialog(
@@ -211,6 +213,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _cancelScanning() {
+    tagInteractionHandler.scanning = false;
     setState(() {
       _currentlyScanning = false;
     });
@@ -264,7 +267,10 @@ class _MainScreenState extends State<MainScreen> {
                     child: FloatingActionButton(
                       heroTag: 'realScanButton',
                       shape: const CircleBorder(),
-                      onPressed: () => _scanTag(),
+                      onPressed: () {
+                        tagInteractionHandler.scanning = true;
+                        _scanTag();
+                      },
                       child: const Icon(Icons.nfc, size: 32),
                     ),
                   ),

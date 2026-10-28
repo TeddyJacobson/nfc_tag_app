@@ -41,9 +41,8 @@ class NfcStreamHandler {
     print("Session ended");
     NfcManager.instance.stopSession();
   }
-}
 
-/*
+  /*
   Takes a tag and returns what a dialogue box should say about it.
   There are four possible response, represented by TagResponse:
     1. The tag is legal and the scan button was pressed = Scanned tag data, null.
@@ -51,40 +50,47 @@ class NfcStreamHandler {
     3. The tag is legal and the scan button wasn't pressed = Null, message explaining issue..
     4. The tag isn't legal and the scan button wasn't pressed = Null, message explaining issue.
 */
-Future<TagResponse> getTagInfo(NfcTag tag) async {
-  // Get the text stored within the tag
-  final List<NdefRecord>? nDefRecords = Ndef.from(tag)!.cachedMessage!.records;
+  Future<TagResponse> getTagInfo(NfcTag tag) async {
+    // Get the text stored within the tag
+    final List<NdefRecord>? nDefRecords = Ndef.from(tag)!
+        .cachedMessage!
+        .records;
 
-  if (nDefRecords != null) {
-    // SUCCESS
-    String tagID = "";
+    if (nDefRecords != null) {
+      // SUCCESS
+      String tagID = "";
 
-    // Start reading message at 3 cause NFC adds extra letters
-    for (int i = 3; i < nDefRecords[0].payload.length; i++) {
-      int uniCode = nDefRecords[0].payload[i];
-      tagID += String.fromCharCode(uniCode);
-    }
+      // Start reading message at 3 cause NFC adds extra letters
+      for (int i = 3; i < nDefRecords[0].payload.length; i++) {
+        int uniCode = nDefRecords[0].payload[i];
+        tagID += String.fromCharCode(uniCode);
+      }
 
-    // Verify tag is 32 hex digits before looking up
-    if (isTagIdFormatValid(tagID)) {
-      // TODO: Figure out how on earth the scanning screen will be checked.
-      try {
-        final tagData = await getTagById(tagID);
-        return TagResponse(tagData, null);
-      } on IdNotFoundException catch (e) {
+      // Verify tag is 32 hex digits before looking up
+      if (isTagIdFormatValid(tagID)) {
+        if (scanning) {
+          try {
+            final tagData = await getTagById(tagID);
+            return TagResponse(tagData, null);
+          } on IdNotFoundException catch (e) {
+            return TagResponse(null, "That is an invalid ID code");
+          }
+        }
+        else{
+          return TagResponse(null, "You should try clicking the scan button :)");
+        }
+      }
+      // Tag ID wasn't valid
+      else {
         return TagResponse(null, _failToScan);
       }
+    } else {
+      // This should never occur
+      return TagResponse(
+        null,
+        "Something went wrong. Please try closing app and re-opening it.",
+      );
     }
-    // Tag ID wasn't valid
-    else {
-      return TagResponse(null, _failToScan);
-    }
-  } else {
-    // This should never occur
-    return TagResponse(
-      null,
-      "Something went wrong. Please try closing app and re-opening it.",
-    );
   }
 }
 
