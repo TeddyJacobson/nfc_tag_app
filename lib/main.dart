@@ -135,6 +135,12 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _showScannedTagDetails(TagResponse tagRes, BuildContext context) {
+    if(_currentlyScanning){
+      Navigator.of(context).pop();
+      setState(() {
+        _currentlyScanning = false;
+      });
+    }
     // The user scanned a tag when they were suppose to
     if (tagRes.tagInfo != null) {
       showDialog(
