@@ -13,8 +13,6 @@ import 'firebase_options.dart';
 
 NFCApp _nfcApp = NFCApp();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-String testTag =
-    '{"id":"abc123","latitude":42.2917,"longitude":-85.5872,"title":"Test Tag Location","description":"Test tag description goes here","creationTimestamp":"2026-10-26T13:00:00.000"}';
 
 // One stop shop for accessing tag info
 final NfcStreamHandler tagInteractionHandler = NfcStreamHandler();
