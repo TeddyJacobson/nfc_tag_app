@@ -23,16 +23,15 @@ void main() async {
   // Ensuring binding is initialized before the app is ran
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Wait for Firebase initialization
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Starting an NFC session
-  NfcManager.instance.checkAvailability().then((NfcAvailability avail) {
-    // All set to start handling tag scans
-    tagInteractionHandler.startSession();
+  // Start an NFC session
+  await NfcManager.instance.checkAvailability();
+  tagInteractionHandler.startSession();
 
-    // Running the app
-    runApp(_nfcApp);
-  });
+  // Run the app
+  runApp(_nfcApp);
 }
 
 class NFCApp extends StatelessWidget {
