@@ -12,7 +12,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 NFCApp _nfcApp = NFCApp();
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 // One stop shop for accessing tag info
 final NfcStreamHandler tagInteractionHandler = NfcStreamHandler();
@@ -53,7 +52,6 @@ class NFCApp extends StatelessWidget {
       ),
     ),
     themeMode: ThemeMode.system,
-    navigatorKey: navigatorKey,
     home: const MainScreen(),
   );
 
@@ -89,6 +87,7 @@ class _MainScreenState extends State<MainScreen> {
     Center(child: Text('My Tags', style: GoogleFonts.huninn(fontSize: 24))),
   ];
 
+  // TODO: Rename and refactor menu items into classes
   void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index; //the index of what page the user is looking at
