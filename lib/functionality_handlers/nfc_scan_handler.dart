@@ -47,7 +47,7 @@ class NfcInteractionHandler {
   There are four possible response, represented by TagResponse:
     1. The tag is legal and the scan button was pressed = Scanned tag data, null.
     2. The tag isn't legal and the scan button was pressed = Null, message explaining issue.
-    3. The tag is legal and the scan button wasn't pressed = Null, message explaining issue..
+    3. The tag is legal and the scan button wasn't pressed = Null, message explaining issue.
     4. The tag isn't legal and the scan button wasn't pressed = Null, message explaining issue.
 */
   Future<TagResponse> getTagInfo(NfcTag tag) async {

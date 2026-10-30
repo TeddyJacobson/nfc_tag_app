@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:nfc_manager/nfc_manager.dart';
-
-import 'functionality_handlers/nfc_scan_handler.dart';
-import 'functionality_handlers/lifecycle_handler.dart';
-
 import 'package:firebase_core/firebase_core.dart';
 
+import 'functionality_handlers/dialog_handler.dart';
+import 'functionality_handlers/lifecycle_handler.dart';
+import 'functionality_handlers/nfc_scan_handler.dart';
 import 'firebase_options.dart';
 
 NFCApp _nfcApp = NFCApp();
@@ -75,10 +72,7 @@ class _MainScreenState extends State<MainScreen> {
   bool _showScanButton = true;
   bool _removeScanButton = false;
   bool _showRealScanButton = false;
-  bool _currentlyScanning = false;
-  TagResponse? _currentlyHeldTag = TagResponse(null, null);
-  bool _currentlyDisplayed = false;
-  bool _showDialog = true;
+  DialogHandler _dialogHandler = DialogHandler();
 
   //all the pages in the app
   final List<Widget> _pages = [
@@ -101,117 +95,6 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  // TODO: Turn all dialog box interactions into a single function in its own file
-  void _scanTag() {
-    // Provide the UI for the user to see the popup
-    setState(() {
-      _currentlyScanning = true;
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Currently Scanning'),
-            // content: const Text('Scannning...'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop(); // Closes the popup
-                  _cancelScanning();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    });
-  }
-
-  void _showScannedTagDetails(TagResponse tagRes, BuildContext context) {
-    // Closing the existing popup if it exists
-    if (_currentlyScanning) {
-      Navigator.of(context).pop();
-      setState(() {
-        _currentlyScanning = false;
-      });
-    }
-
-    _tagInteractionHandler.scanning = false;
-
-    // The user scanned a tag when they were suppose to
-    if (tagRes.tagInfo != null) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Center(
-              child: Text(
-                'Tag Details',
-                style: GoogleFonts.huninn(fontSize: 24),
-              ),
-            ),
-            content: SizedBox(
-              width: 300,
-              height: 500,
-              child: Text(
-                // TODO: Ideally, this won't just have Text for this option
-                'ID: ${tagRes.tagInfo!.id}, Latitude: ${tagRes.tagInfo!.latitude}, Longitude: ${tagRes.tagInfo!.longitude}, Title: ${tagRes.tagInfo!.title}, Description: ${tagRes.tagInfo!.description}, Creation Timestamp: ${tagRes.tagInfo!.creationTimestamp}',
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  _showDialog = false;
-                  _currentlyDisplayed = false;
-                  Navigator.of(context).pop();
-                },
-                child: Text('Close'),
-              ),
-            ],
-          );
-        },
-      );
-    }
-    // Handling all the other invalid popups
-    else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Center(
-              child: Text(
-                'Tag Details',
-                style: GoogleFonts.huninn(fontSize: 24),
-              ),
-            ),
-            content: SizedBox(
-              width: 300,
-              height: 500,
-              child: Text('${tagRes.message}'),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  _showDialog = false;
-                  _currentlyDisplayed = false;
-                  Navigator.of(context).pop();
-                },
-                child: Text('Close'),
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
-
-  void _cancelScanning() {
-    _tagInteractionHandler.scanning = false;
-    setState(() {
-      _currentlyScanning = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -223,17 +106,21 @@ class _MainScreenState extends State<MainScreen> {
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.waiting &&
                   snapshot.connectionState != ConnectionState.none) {
-                if (_currentlyHeldTag != snapshot.data) {
-                  _showDialog = true;
-                  _currentlyHeldTag = snapshot.data;
+                if (_dialogHandler.currentlyHeldTag != snapshot.data) {
+                  _dialogHandler.shouldShowDialog = true;
+                  _dialogHandler.currentlyHeldTag = snapshot.data;
                 }
 
-                if (_showDialog && !_currentlyDisplayed) {
-                  _currentlyDisplayed = true;
+                if (_dialogHandler.shouldShowDialog &&
+                    !_dialogHandler.currentlyDisplayed) {
+                  _dialogHandler.currentlyDisplayed = true;
                   // Due to the terrible nature of ShowDialog, scheduling a dialog popup
                   // after the current frame is drawn
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _showScannedTagDetails(_currentlyHeldTag!, context);
+                    _dialogHandler.showScannedTagDetails(
+                      context,
+                      _tagInteractionHandler,
+                    );
                   });
                 }
               }
@@ -260,10 +147,10 @@ class _MainScreenState extends State<MainScreen> {
                     child: FloatingActionButton(
                       heroTag: 'realScanButton',
                       shape: const CircleBorder(),
-                      onPressed: () {
-                        _tagInteractionHandler.scanning = true;
-                        _scanTag();
-                      },
+                      onPressed: () => _dialogHandler.startTagSearching(
+                        context,
+                        _tagInteractionHandler,
+                      ),
                       child: const Icon(Icons.nfc, size: 32),
                     ),
                   ),
@@ -326,6 +213,7 @@ class _MainScreenState extends State<MainScreen> {
                     }
                   },
                   child: AnimatedScale(
+                    // TODO: Use some switch functionality if possible
                     scale: _scanButtonPressed
                         ? 2.5
                         : (_scanButtonHovered ? 1.25 : 1.0),
