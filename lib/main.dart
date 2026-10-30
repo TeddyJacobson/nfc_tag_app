@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -10,7 +8,6 @@ import 'functionality_handlers/nfc_scan_handler.dart';
 import 'functionality_handlers/lifecycle_handler.dart';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:nfc_tap_app/dataconnect_generated/generated.dart';
 
 import 'firebase_options.dart';
 
