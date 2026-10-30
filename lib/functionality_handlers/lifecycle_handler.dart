@@ -5,7 +5,7 @@ import 'nfc_scan_handler.dart';
 
 class LifecycleHandler extends StatefulWidget {
   // Flutter got some wacky notation, but here is the props passable in
-  final NfcStreamHandler _tagStreamHandler;
+  final NfcInteractionHandler _tagStreamHandler;
 
   // Requiring the named param of handleScan to be included
   const LifecycleHandler({super.key, required this._tagStreamHandler});
@@ -16,7 +16,7 @@ class LifecycleHandler extends StatefulWidget {
 
 class _LifecycleHandler extends State<LifecycleHandler>
     with WidgetsBindingObserver {
-  late NfcStreamHandler _tagStreamHandler;
+  late NfcInteractionHandler _tagStreamHandler;
 
   // On the creation of the Main Screen, creates an observer to watch the whole app
   @override

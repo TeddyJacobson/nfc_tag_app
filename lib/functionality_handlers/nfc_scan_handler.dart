@@ -11,7 +11,7 @@ import '../database_functions.dart';
 final String _failToScan = 'This is a placeholder String. The tag failed :)';
 
 // A class for controlling the output of NFC tag scans as a steady stream
-class NfcStreamHandler {
+class NfcInteractionHandler {
   final controller = StreamController<TagResponse>();
   Stream<TagResponse> get stream => controller.stream;
   // TODO: This will be used to tell the handler if it cares to search the DB.

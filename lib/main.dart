@@ -14,7 +14,7 @@ import 'firebase_options.dart';
 NFCApp _nfcApp = NFCApp();
 
 // One stop shop for accessing tag info
-final NfcStreamHandler tagInteractionHandler = NfcStreamHandler();
+final NfcInteractionHandler _tagInteractionHandler = NfcInteractionHandler();
 
 void main() async {
   // Ensuring binding is initialized before the app is ran
@@ -25,7 +25,7 @@ void main() async {
 
   // Start an NFC session
   await NfcManager.instance.checkAvailability();
-  tagInteractionHandler.startSession();
+  _tagInteractionHandler.startSession();
 
   // Run the app
   runApp(_nfcApp);
@@ -136,7 +136,7 @@ class _MainScreenState extends State<MainScreen> {
       });
     }
 
-    tagInteractionHandler.scanning = false;
+    _tagInteractionHandler.scanning = false;
 
     // The user scanned a tag when they were suppose to
     if (tagRes.tagInfo != null) {
@@ -206,7 +206,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _cancelScanning() {
-    tagInteractionHandler.scanning = false;
+    _tagInteractionHandler.scanning = false;
     setState(() {
       _currentlyScanning = false;
     });
@@ -219,7 +219,7 @@ class _MainScreenState extends State<MainScreen> {
         alignment: Alignment.center,
         children: [
           StreamBuilder(
-            stream: tagInteractionHandler.stream,
+            stream: _tagInteractionHandler.stream,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.waiting &&
                   snapshot.connectionState != ConnectionState.none) {
@@ -242,7 +242,7 @@ class _MainScreenState extends State<MainScreen> {
             },
           ),
 
-          LifecycleHandler(tagStreamHandler: tagInteractionHandler),
+          LifecycleHandler(tagStreamHandler: _tagInteractionHandler),
 
           _pages[_currentIndex],
 
@@ -261,7 +261,7 @@ class _MainScreenState extends State<MainScreen> {
                       heroTag: 'realScanButton',
                       shape: const CircleBorder(),
                       onPressed: () {
-                        tagInteractionHandler.scanning = true;
+                        _tagInteractionHandler.scanning = true;
                         _scanTag();
                       },
                       child: const Icon(Icons.nfc, size: 32),
