@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:nfc_tap_app/bottom_scan_button.dart';
-import 'package:nfc_tap_app/navigation_bar.dart';
-import 'package:nfc_tap_app/real_scan_button.dart';
 
 import 'functionality_handlers/dialog_handler.dart';
 import 'functionality_handlers/lifecycle_handler.dart';
 import 'functionality_handlers/nfc_scan_handler.dart';
-import 'firebase_options.dart';
+
 import 'navigation_pages.dart';
+import 'navigation_bar.dart';
+import 'scan_button.dart';
+
+import 'firebase_options.dart';
 
 NFCApp _nfcApp = NFCApp();
 
@@ -70,11 +71,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
-  bool _scanButtonHovered = false;
-  bool _scanButtonPressed = false;
-  bool _showScanButton = true;
-  bool _removeScanButton = false;
-  bool _showRealScanButton = false;
+  ScanState _scanState = ScanState();
   DialogHandler _dialogHandler = DialogHandler();
 
   // TODO: Rename and refactor menu items into classes
@@ -82,11 +79,7 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _currentIndex = index; //the index of what page the user is looking at
       if (_currentIndex != 1) {
-        _showScanButton = true;
-        _scanButtonHovered = false;
-        _scanButtonPressed = false;
-        _removeScanButton = false;
-        _showRealScanButton = false;
+        _scanState.setToShowState();
       }
     });
   }
@@ -127,11 +120,11 @@ class _MainScreenState extends State<MainScreen> {
 
           LifecycleHandler(tagStreamHandler: _tagInteractionHandler),
 
-          pages[_currentIndex],
+          navigation_pages[_currentIndex],
 
-          if (_currentIndex == 1 && _showRealScanButton)
+          if (_currentIndex == 1 && _scanState.showRealScanButton)
             RealScanButton(
-              _showRealScanButton,
+              _scanState,
               _dialogHandler,
               _tagInteractionHandler,
               context,
@@ -139,18 +132,9 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
       bottomNavigationBar: MainNavigationBar(_currentIndex, _changePage),
-      floatingActionButton: _removeScanButton
+      floatingActionButton: _scanState.removeScanButton
           ? null
-          : BottomScanButton(
-              _showScanButton,
-              _scanButtonHovered,
-              _showRealScanButton,
-              _scanButtonPressed,
-              _removeScanButton,
-              mounted,
-              setState,
-              _changePage,
-            ),
+          : BottomScanButton(_scanState, mounted, setState, _changePage),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
