@@ -6,7 +6,6 @@ import 'functionality_handlers/dialog_handler.dart';
 import 'functionality_handlers/lifecycle_handler.dart';
 import 'functionality_handlers/nfc_scan_handler.dart';
 
-import 'navigation_pages.dart';
 import 'navigation_bar.dart';
 import 'scan_button.dart';
 
@@ -120,7 +119,7 @@ class _MainScreenState extends State<MainScreen> {
 
           LifecycleHandler(tagStreamHandler: _tagInteractionHandler),
 
-          navigation_pages[_currentIndex],
+          MainNavigationBar.navigation_pages[_currentIndex],
 
           if (_currentIndex == 1 && _scanState.showRealScanButton)
             RealScanButton(
