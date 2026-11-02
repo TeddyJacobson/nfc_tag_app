@@ -8,6 +8,7 @@ import 'functionality_handlers/nfc_scan_handler.dart';
 
 import 'navigation_bar.dart';
 import 'scan_button.dart';
+import 'streamed_dialog.dart';
 
 import 'firebase_options.dart';
 
@@ -89,33 +90,7 @@ class _MainScreenState extends State<MainScreen> {
       body: Stack(
         alignment: Alignment.center,
         children: [
-          StreamBuilder(
-            stream: _tagInteractionHandler.stream,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.waiting &&
-                  snapshot.connectionState != ConnectionState.none) {
-                if (_dialogHandler.currentlyHeldTag != snapshot.data) {
-                  _dialogHandler.shouldShowDialog = true;
-                  _dialogHandler.currentlyHeldTag = snapshot.data;
-                }
-
-                if (_dialogHandler.shouldShowDialog &&
-                    !_dialogHandler.currentlyDisplayed) {
-                  _dialogHandler.currentlyDisplayed = true;
-                  // Due to the terrible nature of ShowDialog, scheduling a dialog popup
-                  // after the current frame is drawn
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _dialogHandler.showScannedTagDetails(
-                      context,
-                      _tagInteractionHandler,
-                    );
-                  });
-                }
-              }
-              // Satisfying the Flutter Build conditions
-              return Opacity(opacity: 0);
-            },
-          ),
+          StreamedDialog(_dialogHandler, _tagInteractionHandler),
 
           LifecycleHandler(tagStreamHandler: _tagInteractionHandler),
 
