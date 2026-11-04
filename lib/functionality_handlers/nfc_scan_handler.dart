@@ -14,7 +14,6 @@ final String _failToScan = 'This is a placeholder String. The tag failed :)';
 class NfcInteractionHandler {
   final controller = StreamController<TagResponse>();
   Stream<TagResponse> get stream => controller.stream;
-  // TODO: This will be used to tell the handler if it cares to search the DB.
   bool scanning = false;
 
   void updateNFCStream(NfcTag tag) async {
@@ -51,13 +50,13 @@ class NfcInteractionHandler {
     4. The tag isn't legal and the scan button wasn't pressed = Null, message explaining issue.
 */
   Future<TagResponse> getTagInfo(NfcTag tag) async {
-    // Get the text stored within the tag
-    final List<NdefRecord>? nDefRecords = Ndef.from(tag)!
-        .cachedMessage!
-        .records;
+    // Getting the exchange format info if provided
+    final Ndef? tagNDEF = Ndef.from(tag);
 
-    if (nDefRecords != null) {
+    if (tagNDEF != null) {
       // SUCCESS
+      // Get the text stored within the tag
+      final List<NdefRecord> nDefRecords = tagNDEF.cachedMessage!.records;
       String tagID = "";
 
       // Start reading message at 3 cause NFC adds extra letters
@@ -75,9 +74,11 @@ class NfcInteractionHandler {
           } on IdNotFoundException catch (e) {
             return TagResponse(null, "That is an invalid ID code");
           }
-        }
-        else{
-          return TagResponse(null, "You should try clicking the scan button :)");
+        } else {
+          return TagResponse(
+            null,
+            "You should try clicking the scan button :)",
+          );
         }
       }
       // Tag ID wasn't valid
@@ -86,10 +87,7 @@ class NfcInteractionHandler {
       }
     } else {
       // This should never occur
-      return TagResponse(
-        null,
-        "Something went wrong. Please try closing app and re-opening it.",
-      );
+      return TagResponse(null, _failToScan);
     }
   }
 }
