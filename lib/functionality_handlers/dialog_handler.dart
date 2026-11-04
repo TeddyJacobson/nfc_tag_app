@@ -4,11 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'nfc_scan_handler.dart';
 
 class DialogHandler {
-  bool currentlyScanning = false;
-  bool currentlyDisplayed = false;
-
-  /// Has not yet shown dialog for current tag
-  bool shouldShowDialog = true;
+  final DialogOps dialogOps = DialogOps();
 
   TagResponse? currentlyHeldTag;
 
@@ -18,7 +14,7 @@ class DialogHandler {
     BuildContext context,
     NfcInteractionHandler tagInteractionHandler,
   ) {
-    currentlyScanning = true;
+    dialogOps.currentlyScanning = true;
     tagInteractionHandler.scanning = true;
 
     // Provide the UI for the user to see the popup
@@ -34,7 +30,7 @@ class DialogHandler {
               onPressed: () {
                 Navigator.of(context).pop(); // Closes the popup
                 tagInteractionHandler.scanning = false;
-                currentlyScanning = false;
+                dialogOps.currentlyScanning = false;
               },
             ),
           ],
@@ -50,9 +46,9 @@ class DialogHandler {
     TagResponse tagRes = currentlyHeldTag!;
 
     // Closing the existing popup if it exists
-    if (currentlyScanning) {
+    if (dialogOps.currentlyScanning) {
       Navigator.of(context).pop();
-      currentlyScanning = false;
+      dialogOps.currentlyScanning = false;
     }
 
     tagInteractionHandler.scanning = false;
@@ -62,31 +58,10 @@ class DialogHandler {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            title: Center(
-              child: Text(
-                'Tag Details',
-                style: GoogleFonts.huninn(fontSize: 24),
-              ),
-            ),
-            content: SizedBox(
-              width: 300,
-              height: 500,
-              child: Text(
-                // TODO: Ideally, this won't just have Text for this option
-                'ID: ${tagRes.tagInfo!.id}, Latitude: ${tagRes.tagInfo!.latitude}, Longitude: ${tagRes.tagInfo!.longitude}, Title: ${tagRes.tagInfo!.title}, Description: ${tagRes.tagInfo!.description}, Creation Timestamp: ${tagRes.tagInfo!.creationTimestamp}',
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  shouldShowDialog = false;
-                  currentlyDisplayed = false;
-                  Navigator.of(context).pop();
-                },
-                child: Text('Close'),
-              ),
-            ],
+          return _ValidTagDialog(
+            dialogOps: dialogOps,
+            context: context,
+            tagRes: tagRes,
           );
         },
       );
@@ -96,31 +71,91 @@ class DialogHandler {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            title: Center(
-              child: Text(
-                'Tag Details',
-                style: GoogleFonts.huninn(fontSize: 24),
-              ),
-            ),
-            content: SizedBox(
-              width: 300,
-              height: 500,
-              child: Text('${tagRes.message}'),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  shouldShowDialog = false;
-                  currentlyDisplayed = false;
-                  Navigator.of(context).pop();
-                },
-                child: Text('Close'),
-              ),
-            ],
+          return _InvalidTagDialog(
+            dialogOps: dialogOps,
+            context: context,
+            tagRes: tagRes,
           );
         },
       );
     }
   }
+}
+
+// A class for making an singleton object to handle dialog operations
+class DialogOps {
+  // Is the dialog currently looking for tags
+  bool currentlyScanning = false;
+
+  // Hasn't shown dialog for current tag
+  bool shouldShowDialog = true;
+
+  // Is currently displaying the dialog box
+  bool currentlyDisplayed = false;
+
+  DialogOps();
+}
+
+class _ValidTagDialog extends AlertDialog {
+  final BuildContext context;
+  final TagResponse tagRes;
+
+  _ValidTagDialog({
+    required DialogOps dialogOps,
+    required this.context,
+    required this.tagRes,
+    super.key,
+  }) : super(
+         title: Center(
+           child: Text('Tag Details', style: GoogleFonts.huninn(fontSize: 24)),
+         ),
+         content: SizedBox(
+           width: 300,
+           height: 500,
+           child: Text(
+             'ID: ${tagRes.tagInfo!.id}, Latitude: ${tagRes.tagInfo!.latitude}, Longitude: ${tagRes.tagInfo!.longitude}, Title: ${tagRes.tagInfo!.title}, Description: ${tagRes.tagInfo!.description}, Creation Timestamp: ${tagRes.tagInfo!.creationTimestamp}',
+           ),
+         ),
+         actions: [
+           TextButton(
+             onPressed: () {
+               dialogOps.shouldShowDialog = false;
+               dialogOps.currentlyDisplayed = false;
+               Navigator.of(context).pop();
+             },
+             child: Text('Close'),
+           ),
+         ],
+       );
+}
+
+class _InvalidTagDialog extends AlertDialog {
+  final BuildContext context;
+  final TagResponse tagRes;
+
+  _InvalidTagDialog({
+    required DialogOps dialogOps,
+    required this.context,
+    required this.tagRes,
+    super.key,
+  }) : super(
+         title: Center(
+           child: Text('Tag Details', style: GoogleFonts.huninn(fontSize: 24)),
+         ),
+         content: SizedBox(
+           width: 300,
+           height: 500,
+           child: Text('${tagRes.message}'),
+         ),
+         actions: [
+           TextButton(
+             onPressed: () {
+               dialogOps.shouldShowDialog = false;
+               dialogOps.currentlyDisplayed = false;
+               Navigator.of(context).pop();
+             },
+             child: Text('Close'),
+           ),
+         ],
+       );
 }
