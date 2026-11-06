@@ -5,7 +5,7 @@ import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
 import 'package:nfc_tap_app/dataconnect_generated/generated.dart';
 
-import '../database_functions.dart';
+import '../firebase_functions.dart';
 
 // TODO: Construct messages for failed scans
 final String _failToScan = 'This is a placeholder String. The tag failed :)';

@@ -6,6 +6,8 @@ import 'functionality_handlers/dialog_handler.dart';
 import 'functionality_handlers/lifecycle_handler.dart';
 import 'functionality_handlers/nfc_scan_handler.dart';
 
+import 'local_database/database.dart';
+
 import 'navigation_bar.dart';
 import 'scan_button.dart';
 import 'streamed_dialog.dart';
@@ -20,6 +22,21 @@ final NfcInteractionHandler _tagInteractionHandler = NfcInteractionHandler();
 void main() async {
   // Ensuring binding is initialized before the app is ran
   WidgetsFlutterBinding.ensureInitialized();
+
+  final AppDatabase database = AppDatabase();
+
+  await database
+    .into(database.todoItems)
+    .insert(
+      TodoItemsCompanion.insert(
+        title: 'todo: finish drift setup',
+        content: 'We can now write queries and define our own tables.',
+      ),
+    );
+  
+  List<TodoItem> allItems = await database.select(database.todoItems).get();
+
+  print('************** ITEMS IN DATABASE: $allItems');
 
   // Wait for Firebase initialization
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
