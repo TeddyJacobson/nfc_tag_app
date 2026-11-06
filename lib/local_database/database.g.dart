@@ -3,24 +3,42 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
-class $TodoItemsTable extends TodoItems
-    with TableInfo<$TodoItemsTable, TodoItem> {
+class $TagTableTable extends TagTable
+    with TableInfo<$TagTableTable, TagTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $TodoItemsTable(this.attachedDatabase, [this._alias]);
+  $TagTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _latitudeMeta = const VerificationMeta(
+    'latitude',
+  );
+  @override
+  late final GeneratedColumn<double> latitude = GeneratedColumn<double>(
+    'latitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _longitudeMeta = const VerificationMeta(
+    'longitude',
+  );
+  @override
+  late final GeneratedColumn<double> longitude = GeneratedColumn<double>(
+    'longitude',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
@@ -28,23 +46,19 @@ class $TodoItemsTable extends TodoItems
     'title',
     aliasedName,
     false,
-    additionalChecks: GeneratedColumn.checkTextLength(
-      minTextLength: 6,
-      maxTextLength: 32,
-    ),
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _contentMeta = const VerificationMeta(
-    'content',
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
   );
   @override
-  late final GeneratedColumn<String> content = GeneratedColumn<String>(
-    'body',
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
@@ -53,26 +67,52 @@ class $TodoItemsTable extends TodoItems
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
     'created_at',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
   );
   @override
-  List<GeneratedColumn> get $columns => [id, title, content, createdAt];
+  List<GeneratedColumn> get $columns => [
+    id,
+    latitude,
+    longitude,
+    title,
+    description,
+    createdAt,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'todo_items';
+  static const String $name = 'tag_table';
   @override
   VerificationContext validateIntegrity(
-    Insertable<TodoItem> instance, {
+    Insertable<TagTableData> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('latitude')) {
+      context.handle(
+        _latitudeMeta,
+        latitude.isAcceptableOrUnknown(data['latitude']!, _latitudeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_latitudeMeta);
+    }
+    if (data.containsKey('longitude')) {
+      context.handle(
+        _longitudeMeta,
+        longitude.isAcceptableOrUnknown(data['longitude']!, _longitudeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_longitudeMeta);
     }
     if (data.containsKey('title')) {
       context.handle(
@@ -82,13 +122,14 @@ class $TodoItemsTable extends TodoItems
     } else if (isInserting) {
       context.missing(_titleMeta);
     }
-    if (data.containsKey('body')) {
+    if (data.containsKey('description')) {
       context.handle(
-        _contentMeta,
-        content.isAcceptableOrUnknown(data['body']!, _contentMeta),
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
       );
-    } else if (isInserting) {
-      context.missing(_contentMeta);
     }
     if (data.containsKey('created_at')) {
       context.handle(
@@ -100,179 +141,235 @@ class $TodoItemsTable extends TodoItems
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
-  TodoItem map(Map<String, dynamic> data, {String? tablePrefix}) {
+  TagTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return TodoItem(
+    return TagTableData(
       id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.string,
         data['${effectivePrefix}id'],
+      )!,
+      latitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}latitude'],
+      )!,
+      longitude: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}longitude'],
       )!,
       title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}title'],
       )!,
-      content: attachedDatabase.typeMapping.read(
+      description: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}body'],
-      )!,
+        data['${effectivePrefix}description'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
-      ),
+      )!,
     );
   }
 
   @override
-  $TodoItemsTable createAlias(String alias) {
-    return $TodoItemsTable(attachedDatabase, alias);
+  $TagTableTable createAlias(String alias) {
+    return $TagTableTable(attachedDatabase, alias);
   }
 }
 
-class TodoItem extends DataClass implements Insertable<TodoItem> {
-  final int id;
+class TagTableData extends DataClass implements Insertable<TagTableData> {
+  final String id;
+  final double latitude;
+  final double longitude;
   final String title;
-  final String content;
-  final DateTime? createdAt;
-  const TodoItem({
+  final String? description;
+  final DateTime createdAt;
+  const TagTableData({
     required this.id,
+    required this.latitude,
+    required this.longitude,
     required this.title,
-    required this.content,
-    this.createdAt,
+    this.description,
+    required this.createdAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
+    map['id'] = Variable<String>(id);
+    map['latitude'] = Variable<double>(latitude);
+    map['longitude'] = Variable<double>(longitude);
     map['title'] = Variable<String>(title);
-    map['body'] = Variable<String>(content);
-    if (!nullToAbsent || createdAt != null) {
-      map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
     }
+    map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
 
-  TodoItemsCompanion toCompanion(bool nullToAbsent) {
-    return TodoItemsCompanion(
+  TagTableCompanion toCompanion(bool nullToAbsent) {
+    return TagTableCompanion(
       id: Value(id),
+      latitude: Value(latitude),
+      longitude: Value(longitude),
       title: Value(title),
-      content: Value(content),
-      createdAt: createdAt == null && nullToAbsent
+      description: description == null && nullToAbsent
           ? const Value.absent()
-          : Value(createdAt),
+          : Value(description),
+      createdAt: Value(createdAt),
     );
   }
 
-  factory TodoItem.fromJson(
+  factory TagTableData.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return TodoItem(
-      id: serializer.fromJson<int>(json['id']),
+    return TagTableData(
+      id: serializer.fromJson<String>(json['id']),
+      latitude: serializer.fromJson<double>(json['latitude']),
+      longitude: serializer.fromJson<double>(json['longitude']),
       title: serializer.fromJson<String>(json['title']),
-      content: serializer.fromJson<String>(json['content']),
-      createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
+      description: serializer.fromJson<String?>(json['description']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
+      'latitude': serializer.toJson<double>(latitude),
+      'longitude': serializer.toJson<double>(longitude),
       'title': serializer.toJson<String>(title),
-      'content': serializer.toJson<String>(content),
-      'createdAt': serializer.toJson<DateTime?>(createdAt),
+      'description': serializer.toJson<String?>(description),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
 
-  TodoItem copyWith({
-    int? id,
+  TagTableData copyWith({
+    String? id,
+    double? latitude,
+    double? longitude,
     String? title,
-    String? content,
-    Value<DateTime?> createdAt = const Value.absent(),
-  }) => TodoItem(
+    Value<String?> description = const Value.absent(),
+    DateTime? createdAt,
+  }) => TagTableData(
     id: id ?? this.id,
+    latitude: latitude ?? this.latitude,
+    longitude: longitude ?? this.longitude,
     title: title ?? this.title,
-    content: content ?? this.content,
-    createdAt: createdAt.present ? createdAt.value : this.createdAt,
+    description: description.present ? description.value : this.description,
+    createdAt: createdAt ?? this.createdAt,
   );
-  TodoItem copyWithCompanion(TodoItemsCompanion data) {
-    return TodoItem(
+  TagTableData copyWithCompanion(TagTableCompanion data) {
+    return TagTableData(
       id: data.id.present ? data.id.value : this.id,
+      latitude: data.latitude.present ? data.latitude.value : this.latitude,
+      longitude: data.longitude.present ? data.longitude.value : this.longitude,
       title: data.title.present ? data.title.value : this.title,
-      content: data.content.present ? data.content.value : this.content,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
 
   @override
   String toString() {
-    return (StringBuffer('TodoItem(')
+    return (StringBuffer('TagTableData(')
           ..write('id: $id, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
           ..write('title: $title, ')
-          ..write('content: $content, ')
+          ..write('description: $description, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, title, content, createdAt);
+  int get hashCode =>
+      Object.hash(id, latitude, longitude, title, description, createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is TodoItem &&
+      (other is TagTableData &&
           other.id == this.id &&
+          other.latitude == this.latitude &&
+          other.longitude == this.longitude &&
           other.title == this.title &&
-          other.content == this.content &&
+          other.description == this.description &&
           other.createdAt == this.createdAt);
 }
 
-class TodoItemsCompanion extends UpdateCompanion<TodoItem> {
-  final Value<int> id;
+class TagTableCompanion extends UpdateCompanion<TagTableData> {
+  final Value<String> id;
+  final Value<double> latitude;
+  final Value<double> longitude;
   final Value<String> title;
-  final Value<String> content;
-  final Value<DateTime?> createdAt;
-  const TodoItemsCompanion({
+  final Value<String?> description;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const TagTableCompanion({
     this.id = const Value.absent(),
+    this.latitude = const Value.absent(),
+    this.longitude = const Value.absent(),
     this.title = const Value.absent(),
-    this.content = const Value.absent(),
+    this.description = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
-  TodoItemsCompanion.insert({
-    this.id = const Value.absent(),
+  TagTableCompanion.insert({
+    required String id,
+    required double latitude,
+    required double longitude,
     required String title,
-    required String content,
+    this.description = const Value.absent(),
     this.createdAt = const Value.absent(),
-  }) : title = Value(title),
-       content = Value(content);
-  static Insertable<TodoItem> custom({
-    Expression<int>? id,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       latitude = Value(latitude),
+       longitude = Value(longitude),
+       title = Value(title);
+  static Insertable<TagTableData> custom({
+    Expression<String>? id,
+    Expression<double>? latitude,
+    Expression<double>? longitude,
     Expression<String>? title,
-    Expression<String>? content,
+    Expression<String>? description,
     Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
       if (title != null) 'title': title,
-      if (content != null) 'body': content,
+      if (description != null) 'description': description,
       if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
-  TodoItemsCompanion copyWith({
-    Value<int>? id,
+  TagTableCompanion copyWith({
+    Value<String>? id,
+    Value<double>? latitude,
+    Value<double>? longitude,
     Value<String>? title,
-    Value<String>? content,
-    Value<DateTime?>? createdAt,
+    Value<String?>? description,
+    Value<DateTime>? createdAt,
+    Value<int>? rowid,
   }) {
-    return TodoItemsCompanion(
+    return TagTableCompanion(
       id: id ?? this.id,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
       title: title ?? this.title,
-      content: content ?? this.content,
+      description: description ?? this.description,
       createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -280,27 +377,39 @@ class TodoItemsCompanion extends UpdateCompanion<TodoItem> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
+    }
+    if (latitude.present) {
+      map['latitude'] = Variable<double>(latitude.value);
+    }
+    if (longitude.present) {
+      map['longitude'] = Variable<double>(longitude.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
     }
-    if (content.present) {
-      map['body'] = Variable<String>(content.value);
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('TodoItemsCompanion(')
+    return (StringBuffer('TagTableCompanion(')
           ..write('id: $id, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
           ..write('title: $title, ')
-          ..write('content: $content, ')
-          ..write('createdAt: $createdAt')
+          ..write('description: $description, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -309,38 +418,54 @@ class TodoItemsCompanion extends UpdateCompanion<TodoItem> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
-  late final $TodoItemsTable todoItems = $TodoItemsTable(this);
+  late final $TagTableTable tagTable = $TagTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [todoItems];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [tagTable];
 }
 
-typedef $$TodoItemsTableCreateCompanionBuilder = TodoItemsCompanion Function({
-  Value<int> id,
+typedef $$TagTableTableCreateCompanionBuilder = TagTableCompanion Function({
+  required String id,
+  required double latitude,
+  required double longitude,
   required String title,
-  required String content,
-  Value<DateTime?> createdAt,
+  Value<String?> description,
+  Value<DateTime> createdAt,
+  Value<int> rowid,
 });
-typedef $$TodoItemsTableUpdateCompanionBuilder = TodoItemsCompanion Function({
-  Value<int> id,
+typedef $$TagTableTableUpdateCompanionBuilder = TagTableCompanion Function({
+  Value<String> id,
+  Value<double> latitude,
+  Value<double> longitude,
   Value<String> title,
-  Value<String> content,
-  Value<DateTime?> createdAt,
+  Value<String?> description,
+  Value<DateTime> createdAt,
+  Value<int> rowid,
 });
 
-class $$TodoItemsTableFilterComposer
-    extends Composer<_$AppDatabase, $TodoItemsTable> {
-  $$TodoItemsTableFilterComposer({
+class $$TagTableTableFilterComposer
+    extends Composer<_$AppDatabase, $TagTableTable> {
+  $$TagTableTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
+  ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get longitude => $composableBuilder(
+    column: $table.longitude,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -349,8 +474,8 @@ class $$TodoItemsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get content => $composableBuilder(
-    column: $table.content,
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -360,17 +485,27 @@ class $$TodoItemsTableFilterComposer
   );
 }
 
-class $$TodoItemsTableOrderingComposer
-    extends Composer<_$AppDatabase, $TodoItemsTable> {
-  $$TodoItemsTableOrderingComposer({
+class $$TagTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $TagTableTable> {
+  $$TagTableTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
+  ColumnOrderings<String> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get latitude => $composableBuilder(
+    column: $table.latitude,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get longitude => $composableBuilder(
+    column: $table.longitude,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -379,8 +514,8 @@ class $$TodoItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get content => $composableBuilder(
-    column: $table.content,
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -390,83 +525,106 @@ class $$TodoItemsTableOrderingComposer
   );
 }
 
-class $$TodoItemsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $TodoItemsTable> {
-  $$TodoItemsTableAnnotationComposer({
+class $$TagTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TagTableTable> {
+  $$TagTableTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
+  GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<double> get latitude =>
+      $composableBuilder(column: $table.latitude, builder: (column) => column);
+
+  GeneratedColumn<double> get longitude =>
+      $composableBuilder(column: $table.longitude, builder: (column) => column);
 
   GeneratedColumn<String> get title =>
       $composableBuilder(column: $table.title, builder: (column) => column);
 
-  GeneratedColumn<String> get content =>
-      $composableBuilder(column: $table.content, builder: (column) => column);
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 }
 
-class $$TodoItemsTableTableManager
+class $$TagTableTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $TodoItemsTable,
-          TodoItem,
-          $$TodoItemsTableFilterComposer,
-          $$TodoItemsTableOrderingComposer,
-          $$TodoItemsTableAnnotationComposer,
-          $$TodoItemsTableCreateCompanionBuilder,
-          $$TodoItemsTableUpdateCompanionBuilder,
-          (TodoItem, BaseReferences<_$AppDatabase, $TodoItemsTable, TodoItem>),
-          TodoItem,
+          $TagTableTable,
+          TagTableData,
+          $$TagTableTableFilterComposer,
+          $$TagTableTableOrderingComposer,
+          $$TagTableTableAnnotationComposer,
+          $$TagTableTableCreateCompanionBuilder,
+          $$TagTableTableUpdateCompanionBuilder,
+          (
+            TagTableData,
+            BaseReferences<_$AppDatabase, $TagTableTable, TagTableData>,
+          ),
+          TagTableData,
           PrefetchHooks Function()
         > {
-  $$TodoItemsTableTableManager(_$AppDatabase db, $TodoItemsTable table)
+  $$TagTableTableTableManager(_$AppDatabase db, $TagTableTable table)
     : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$TodoItemsTableFilterComposer($db: db, $table: table),
+              $$TagTableTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$TodoItemsTableOrderingComposer($db: db, $table: table),
+              $$TagTableTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$TodoItemsTableAnnotationComposer($db: db, $table: table),
+              $$TagTableTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                Value<String> id = const Value.absent(),
+                Value<double> latitude = const Value.absent(),
+                Value<double> longitude = const Value.absent(),
                 Value<String> title = const Value.absent(),
-                Value<String> content = const Value.absent(),
-                Value<DateTime?> createdAt = const Value.absent(),
-              }) => TodoItemsCompanion(
+                Value<String?> description = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TagTableCompanion(
                 id: id,
+                latitude: latitude,
+                longitude: longitude,
                 title: title,
-                content: content,
+                description: description,
                 createdAt: createdAt,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
+                required String id,
+                required double latitude,
+                required double longitude,
                 required String title,
-                required String content,
-                Value<DateTime?> createdAt = const Value.absent(),
-              }) => TodoItemsCompanion.insert(
+                Value<String?> description = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TagTableCompanion.insert(
                 id: id,
+                latitude: latitude,
+                longitude: longitude,
                 title: title,
-                content: content,
+                description: description,
                 createdAt: createdAt,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable<$TodoItemsTable, TodoItem>(table),
-                  BaseReferences<_$AppDatabase, $TodoItemsTable, TodoItem>(
+                  e.readTable<$TagTableTable, TagTableData>(table),
+                  BaseReferences<_$AppDatabase, $TagTableTable, TagTableData>(
                     db,
                     table,
                     e,
@@ -479,24 +637,27 @@ class $$TodoItemsTableTableManager
       );
 }
 
-typedef $$TodoItemsTableProcessedTableManager =
+typedef $$TagTableTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $TodoItemsTable,
-      TodoItem,
-      $$TodoItemsTableFilterComposer,
-      $$TodoItemsTableOrderingComposer,
-      $$TodoItemsTableAnnotationComposer,
-      $$TodoItemsTableCreateCompanionBuilder,
-      $$TodoItemsTableUpdateCompanionBuilder,
-      (TodoItem, BaseReferences<_$AppDatabase, $TodoItemsTable, TodoItem>),
-      TodoItem,
+      $TagTableTable,
+      TagTableData,
+      $$TagTableTableFilterComposer,
+      $$TagTableTableOrderingComposer,
+      $$TagTableTableAnnotationComposer,
+      $$TagTableTableCreateCompanionBuilder,
+      $$TagTableTableUpdateCompanionBuilder,
+      (
+        TagTableData,
+        BaseReferences<_$AppDatabase, $TagTableTable, TagTableData>,
+      ),
+      TagTableData,
       PrefetchHooks Function()
     >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
-  $$TodoItemsTableTableManager get todoItems =>
-      $$TodoItemsTableTableManager(_db, _db.todoItems);
+  $$TagTableTableTableManager get tagTable =>
+      $$TagTableTableTableManager(_db, _db.tagTable);
 }

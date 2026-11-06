@@ -26,17 +26,19 @@ void main() async {
   final AppDatabase database = AppDatabase();
 
   await database
-    .into(database.todoItems)
-    .insert(
-      TodoItemsCompanion.insert(
-        title: 'todo: finish drift setup',
-        content: 'We can now write queries and define our own tables.',
-      ),
-    );
-  
-  List<TodoItem> allItems = await database.select(database.todoItems).get();
+      .into(database.tagTable)
+      .insert(
+        TagTableCompanion.insert(
+          id: "39749d59b89f46f3b5808c4879f43d53",
+          latitude: 0,
+          longitude: 0,
+          title: "Test",
+        ),
+      );
 
-  print('************** ITEMS IN DATABASE: $allItems');
+  List<TagTableData> allItems = await database.select(database.tagTable).get();
+
+  print('\n\n************** ITEMS IN DATABASE: $allItems\n\n');
 
   // Wait for Firebase initialization
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
