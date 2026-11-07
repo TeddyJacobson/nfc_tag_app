@@ -62,6 +62,11 @@ class AppDatabase extends _$AppDatabase {
     print('\n\n************** ITEMS IN DATABASE: $allItems\n\n');
   }
 
+  // Returns a stream to be watched
+  Future<Stream<List<TagTableData>>> getStream() async{
+    return select(tagTable).watch();
+  }
+
   static QueryExecutor _openConnection() {
     return driftDatabase(
       name: 'my_database',

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:nfc_tap_app/map_display.dart';
 
 import 'functionality_handlers/dialog_handler.dart';
 import 'functionality_handlers/lifecycle_handler.dart';
@@ -18,6 +19,7 @@ NFCApp _nfcApp = NFCApp();
 
 // Accessing the systems local database
 final AppDatabase database = AppDatabase();
+Stream<List<TagTableData>>? persistentStorageOutput;
 
 // One stop shop for accessing tag info
 final NfcInteractionHandler _tagInteractionHandler = NfcInteractionHandler(database);
@@ -26,23 +28,11 @@ void main() async {
   // Ensuring binding is initialized before the app is ran
   WidgetsFlutterBinding.ensureInitialized();
 
-  // await database
-  //     .into(database.tagTable)
-  //     .insert(
-  //       TagTableCompanion.insert(
-  //         id: "39749d59b89f46f3b5808c4879f43d53",
-  //         latitude: 0,
-  //         longitude: 0,
-  //         title: "Test",
-  //       ),
-  //     );
-
-  // List<TagTableData> allItems = await database.select(database.tagTable).get();
-
-  // print('\n\n************** ITEMS IN DATABASE: $allItems\n\n');
-
   // Wait for Firebase initialization
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Setup a stream to watch
+  persistentStorageOutput = await database.getStream();
 
   // Start an NFC session
   await NfcManager.instance.checkAvailability();
@@ -123,6 +113,9 @@ class _MainScreenState extends State<MainScreen> {
               _tagInteractionHandler,
               context,
             ),
+          
+          if(_currentIndex == 0)
+            MapPlaceHolder(persistentStorageOutput!)
         ],
       ),
       bottomNavigationBar: MainNavigationBar(_currentIndex, _changePage),
