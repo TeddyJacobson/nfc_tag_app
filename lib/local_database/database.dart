@@ -1,5 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+
+import '/dataconnect_generated/generated.dart';
+
 import 'package:path_provider/path_provider.dart';
 
 part 'database.g.dart';
@@ -22,6 +25,42 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   int get schemaVersion => 1;
+
+  // Insert tag entry into the table if it does not exist
+  Future<int> insertTag(GetTagByIdTag tag) async {
+    // Getting the correct description value if null
+    Value<String?> description = tag.description != null
+        ? Value(tag.description)
+        : Value.absent();
+
+    // Converting a tag into a entry companion
+    TagTableCompanion tagTableEntry = TagTableCompanion(
+      id: Value(tag.id),
+      latitude: Value(tag.latitude),
+      longitude: Value(tag.longitude),
+      title: Value(tag.title),
+      description: description,
+    );
+
+    // Searching if an entry with the same value already exists
+    // Note, we must get a list, because getSingle() throws exception if entry DNE
+    List<TagTableData> checkEntry = await (select(
+      tagTable,
+    )..where((tag) => tag.id.equals(tagTableEntry.id.value))).get();
+
+    // No entry exists, so insert an entry
+    if (checkEntry.isEmpty) {
+      return into(tagTable).insert(tagTableEntry);
+    }
+    // An entry does exist, so do nothing
+    return 0;
+  }
+
+  //TODO: Remove this function as it just for testing
+  void printCurrentList() async {
+    List<TagTableData> allItems = await select(tagTable).get();
+    print('\n\n************** ITEMS IN DATABASE: $allItems\n\n');
+  }
 
   static QueryExecutor _openConnection() {
     return driftDatabase(

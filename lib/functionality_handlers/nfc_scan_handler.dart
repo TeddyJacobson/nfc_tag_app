@@ -3,18 +3,26 @@ import 'dart:async';
 import 'package:nfc_manager/ndef_record.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager_ndef/nfc_manager_ndef.dart';
-import 'package:nfc_tap_app/dataconnect_generated/generated.dart';
+
+import '/dataconnect_generated/generated.dart';
+import '/local_database/database.dart';
 
 import '../firebase_functions.dart';
 
 // TODO: Construct messages for failed scans
 final String _failToScan = 'This is a placeholder String. The tag failed :)';
 
-// A class for controlling the output of NFC tag scans as a steady stream
+// A class for controlling the operations of NFC scans
 class NfcInteractionHandler {
-  final controller = StreamController<TagResponse>();
+  // Stream handling
+  final StreamController<TagResponse> controller =
+      StreamController<TagResponse>();
   Stream<TagResponse> get stream => controller.stream;
   bool scanning = false;
+
+  // Setting up for NFC interaction with a systems local database
+  final AppDatabase systemDatabase;
+  NfcInteractionHandler(this.systemDatabase);
 
   void updateNFCStream(NfcTag tag) async {
     TagResponse response = await getTagInfo(tag);
@@ -69,12 +77,23 @@ class NfcInteractionHandler {
       if (isTagIdFormatValid(tagID)) {
         if (scanning) {
           try {
+            // Attempting to get the tag from the external firebase database
             final tagData = await getTagById(tagID);
+            // Saving result to the systems internal sqlite database
+            await systemDatabase.insertTag(tagData);
+            // TODO: Remove this test print
+            systemDatabase.printCurrentList();
+
             return TagResponse(tagData, null);
           } on IdNotFoundException catch (e) {
+            // TODO: Remove this test print
+            systemDatabase.printCurrentList();
+            // TODO: This hasn't been tested in a while and should be again
             return TagResponse(null, "That is an invalid ID code");
           }
         } else {
+          // TODO: Remove this test print
+          systemDatabase.printCurrentList();
           return TagResponse(
             null,
             "You should try clicking the scan button :)",
@@ -83,9 +102,13 @@ class NfcInteractionHandler {
       }
       // Tag ID wasn't valid
       else {
+        // TODO: Remove this test print
+        systemDatabase.printCurrentList();
         return TagResponse(null, _failToScan);
       }
     } else {
+      // TODO: Remove this test print
+      systemDatabase.printCurrentList();
       // This should never occur
       return TagResponse(null, _failToScan);
     }

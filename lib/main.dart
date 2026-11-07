@@ -16,29 +16,30 @@ import 'firebase_options.dart';
 
 NFCApp _nfcApp = NFCApp();
 
+// Accessing the systems local database
+final AppDatabase database = AppDatabase();
+
 // One stop shop for accessing tag info
-final NfcInteractionHandler _tagInteractionHandler = NfcInteractionHandler();
+final NfcInteractionHandler _tagInteractionHandler = NfcInteractionHandler(database);
 
 void main() async {
   // Ensuring binding is initialized before the app is ran
   WidgetsFlutterBinding.ensureInitialized();
 
-  final AppDatabase database = AppDatabase();
+  // await database
+  //     .into(database.tagTable)
+  //     .insert(
+  //       TagTableCompanion.insert(
+  //         id: "39749d59b89f46f3b5808c4879f43d53",
+  //         latitude: 0,
+  //         longitude: 0,
+  //         title: "Test",
+  //       ),
+  //     );
 
-  await database
-      .into(database.tagTable)
-      .insert(
-        TagTableCompanion.insert(
-          id: "39749d59b89f46f3b5808c4879f43d53",
-          latitude: 0,
-          longitude: 0,
-          title: "Test",
-        ),
-      );
+  // List<TagTableData> allItems = await database.select(database.tagTable).get();
 
-  List<TagTableData> allItems = await database.select(database.tagTable).get();
-
-  print('\n\n************** ITEMS IN DATABASE: $allItems\n\n');
+  // print('\n\n************** ITEMS IN DATABASE: $allItems\n\n');
 
   // Wait for Firebase initialization
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -90,8 +91,8 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
-  ScanState _scanState = ScanState();
-  DialogHandler _dialogHandler = DialogHandler();
+  final ScanState _scanState = ScanState();
+  final DialogHandler _dialogHandler = DialogHandler();
 
   // TODO: Rename and refactor menu items into classes
   void _changePage(int index) {
