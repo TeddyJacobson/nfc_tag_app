@@ -5,8 +5,6 @@ import 'functionality_handlers/nfc_scan_handler.dart';
 
 // Widget to display info constructed from dialog handler
 class StreamedDialog extends StreamBuilder {
-  // final DialogHandler _dialogHandler;
-  // final NfcInteractionHandler _tagInteractionHandler;
 
   StreamedDialog(DialogHandler dialogHandler, NfcInteractionHandler tagInteractionHandler, {super.key})
     : super(
