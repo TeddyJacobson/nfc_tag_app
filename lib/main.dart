@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:nfc_tap_app/map_display.dart';
 
 import 'functionality_handlers/dialog_handler.dart';
 import 'functionality_handlers/lifecycle_handler.dart';
@@ -9,9 +8,10 @@ import 'functionality_handlers/nfc_scan_handler.dart';
 
 import 'local_database/database.dart';
 
+import 'streamed_dialog.dart';
 import 'navigation_bar.dart';
 import 'scan_button.dart';
-import 'streamed_dialog.dart';
+import 'map_display.dart';
 
 import 'firebase_options.dart';
 

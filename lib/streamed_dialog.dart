@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'functionality_handlers/dialog_handler.dart';
 import 'functionality_handlers/nfc_scan_handler.dart';
 
-// Widget to display info constructed from dialog handler
+/// Widget to display info constructed from dialog handler
 class StreamedDialog extends StreamBuilder {
 
   StreamedDialog(DialogHandler dialogHandler, NfcInteractionHandler tagInteractionHandler, {super.key})

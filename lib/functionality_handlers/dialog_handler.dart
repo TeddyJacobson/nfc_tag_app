@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'nfc_scan_handler.dart';
 
+/// Object that contains all of the states a dialog box can be in
 class DialogHandler {
-  // Object that contains all of the states a dialog box can be in
   final DialogOps dialogOps = DialogOps();
 
   TagResponse? currentlyHeldTag;
