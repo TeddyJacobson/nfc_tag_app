@@ -5,29 +5,29 @@ import 'functionality_handlers/nfc_scan_handler.dart';
 
 // Widget to display info constructed from dialog handler
 class StreamedDialog extends StreamBuilder {
-  final DialogHandler _dialogHandler;
-  final NfcInteractionHandler _tagInteractionHandler;
+  // final DialogHandler _dialogHandler;
+  // final NfcInteractionHandler _tagInteractionHandler;
 
-  StreamedDialog(this._dialogHandler, this._tagInteractionHandler, {super.key})
+  StreamedDialog(DialogHandler dialogHandler, NfcInteractionHandler tagInteractionHandler, {super.key})
     : super(
-        stream: _tagInteractionHandler.stream,
+        stream: tagInteractionHandler.stream,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.waiting &&
               snapshot.connectionState != ConnectionState.none) {
-            if (_dialogHandler.currentlyHeldTag != snapshot.data) {
-              _dialogHandler.dialogOps.shouldShowDialog = true;
-              _dialogHandler.currentlyHeldTag = snapshot.data;
+            if (dialogHandler.currentlyHeldTag != snapshot.data) {
+              dialogHandler.dialogOps.shouldShowDialog = true;
+              dialogHandler.currentlyHeldTag = snapshot.data;
             }
 
-            if (_dialogHandler.dialogOps.shouldShowDialog &&
-                !_dialogHandler.dialogOps.currentlyDisplayed) {
-              _dialogHandler.dialogOps.currentlyDisplayed = true;
+            if (dialogHandler.dialogOps.shouldShowDialog &&
+                !dialogHandler.dialogOps.currentlyDisplayed) {
+              dialogHandler.dialogOps.currentlyDisplayed = true;
               // Due to the terrible nature of ShowDialog, scheduling a dialog popup
               // after the current frame is drawn
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                _dialogHandler.showScannedTagDetails(
+                dialogHandler.showScannedTagDetails(
                   context,
-                  _tagInteractionHandler,
+                  tagInteractionHandler,
                 );
               });
             }
