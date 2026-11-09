@@ -111,9 +111,11 @@ class _ValidTagDialog extends AlertDialog {
         ),
         content: FractionallySizedBox(
           widthFactor: 1,
-          heightFactor: .25,
-          child: Text(
-            'Location: ${tagRes.tagInfo!.latitude}, ${tagRes.tagInfo!.longitude}\n${tagRes.tagInfo!.description}',
+          heightFactor: .75,
+          child: SingleChildScrollView(
+            child: Text(
+              'Location: ${tagRes.tagInfo!.latitude}, ${tagRes.tagInfo!.longitude}\n${tagRes.tagInfo!.description}',
+            ),
           ),
         ),
         actions: [
