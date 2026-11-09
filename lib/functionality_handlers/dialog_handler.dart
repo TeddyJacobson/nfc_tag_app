@@ -59,26 +59,26 @@ class DialogHandler {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return _ValidTagDialog(
-            dialogOps: dialogOps,
-            context: context,
-            tagRes: tagRes,
-          );
+          return _ValidTagDialog(context: context, tagRes: tagRes);
         },
-      );
+      ).then((unusedVal) {
+        // Cleaning up when a dialog box is closed
+        dialogOps.shouldShowDialog = false;
+        dialogOps.currentlyDisplayed = false;
+      });
     }
     // Handling all the other invalid popups
     else {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return _InvalidTagDialog(
-            dialogOps: dialogOps,
-            context: context,
-            tagRes: tagRes,
-          );
+          return _InvalidTagDialog(context: context, tagRes: tagRes);
         },
-      );
+      ).then((unusedVal) {
+        // Cleaning up when a dialog box is closed
+        dialogOps.shouldShowDialog = false;
+        dialogOps.currentlyDisplayed = false;
+      });
     }
   }
 }
@@ -101,67 +101,55 @@ class _ValidTagDialog extends AlertDialog {
   final BuildContext context;
   final TagResponse tagRes;
 
-  _ValidTagDialog({
-    required DialogOps dialogOps,
-    required this.context,
-    required this.tagRes,
-    super.key,
-  }) : super(
-         title: Center(
-           child: Text('Tag Details', style: GoogleFonts.huninn(fontSize: 24)),
-         ),
-         content: SizedBox(
-           width: 300,
-           height: 500,
-           child: Text(
-             'ID: ${tagRes.tagInfo!.id}, Latitude: ${tagRes.tagInfo!.latitude}, Longitude: ${tagRes.tagInfo!.longitude}, Title: ${tagRes.tagInfo!.title}, Description: ${tagRes.tagInfo!.description}, Creation Timestamp: ${tagRes.tagInfo!.creationTimestamp}',
-           ),
-         ),
-         actions: [
-           TextButton(
-             onPressed: () {
-               dialogOps.shouldShowDialog = false;
-               dialogOps.currentlyDisplayed = false;
-               Navigator.of(context).pop();
-             },
-             child: Text('Close', style: GoogleFonts.huninn(fontSize: 16)),
-           ),
-         ],
-       );
+  _ValidTagDialog({required this.context, required this.tagRes, super.key})
+    : super(
+        title: Center(
+          child: Text('Tag Details', style: GoogleFonts.huninn(fontSize: 24)),
+        ),
+        content: SizedBox(
+          width: 300,
+          height: 500,
+          child: Text(
+            'ID: ${tagRes.tagInfo!.id}, Latitude: ${tagRes.tagInfo!.latitude}, Longitude: ${tagRes.tagInfo!.longitude}, Title: ${tagRes.tagInfo!.title}, Description: ${tagRes.tagInfo!.description}, Creation Timestamp: ${tagRes.tagInfo!.creationTimestamp}',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Close', style: GoogleFonts.huninn(fontSize: 16)),
+          ),
+        ],
+      );
 }
 
 class _InvalidTagDialog extends AlertDialog {
   final BuildContext context;
   final TagResponse tagRes;
 
-  _InvalidTagDialog({
-    required DialogOps dialogOps,
-    required this.context,
-    required this.tagRes,
-    super.key,
-  }) : super(
-         title: Center(
-           child: Text('Oops!', style: GoogleFonts.huninn(fontSize: 24)),
-         ),
-         content: FractionallySizedBox(
-           widthFactor: 1,
-           heightFactor: .25,
-           child: SingleChildScrollView(
-             child: Text(
-               '${tagRes.message}',
-               style: GoogleFonts.huninn(fontSize: 16),
-             ),
-           ),
-         ),
-         actions: [
-           TextButton(
-             onPressed: () {
-               dialogOps.shouldShowDialog = false;
-               dialogOps.currentlyDisplayed = false;
-               Navigator.of(context).pop();
-             },
-             child: Text('Close', style: GoogleFonts.huninn(fontSize: 16)),
-           ),
-         ],
-       );
+  _InvalidTagDialog({required this.context, required this.tagRes, super.key})
+    : super(
+        title: Center(
+          child: Text('Oops!', style: GoogleFonts.huninn(fontSize: 24)),
+        ),
+        content: FractionallySizedBox(
+          widthFactor: 1,
+          heightFactor: .25,
+          child: SingleChildScrollView(
+            child: Text(
+              '${tagRes.message}',
+              style: GoogleFonts.huninn(fontSize: 16),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Close', style: GoogleFonts.huninn(fontSize: 16)),
+          ),
+        ],
+      );
 }
