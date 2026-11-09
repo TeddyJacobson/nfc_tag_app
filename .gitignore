@@ -1,3 +1,7 @@
+# 
+ios/**/Package.resolved
+macos/**/Package.resolved
+
 # Miscellaneous
 *.class
 *.log
