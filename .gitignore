@@ -1,4 +1,4 @@
-# 
+# iOS and MacOS package files
 ios/**/Package.resolved
 macos/**/Package.resolved
 
