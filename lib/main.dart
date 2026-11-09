@@ -21,7 +21,9 @@ final AppDatabase database = AppDatabase();
 Stream<List<TagTableData>>? _persistentStorageOutput;
 
 // One stop shop for accessing tag info
-final NfcInteractionHandler _tagInteractionHandler = NfcInteractionHandler(database);
+final NfcInteractionHandler _tagInteractionHandler = NfcInteractionHandler(
+  database,
+);
 
 void main() async {
   // Ensuring binding is initialized before the app is ran
@@ -85,7 +87,11 @@ class _MainScreenState extends State<MainScreen> {
 
   // Use constructor to initialize _navigationHandler with _scanState
   _MainScreenState() {
-    _navigationHandler = NavigationHandler(setState, _scanState, _persistentStorageOutput!);
+    _navigationHandler = NavigationHandler(
+      setState,
+      _scanState,
+      _persistentStorageOutput!,
+    );
   }
 
   @override
@@ -100,7 +106,8 @@ class _MainScreenState extends State<MainScreen> {
 
           _navigationHandler.pageWidget,
 
-          if (_navigationHandler.currentPage == NavigationPage.scan && _scanState.showRealScanButton)
+          if (_navigationHandler.currentPage == NavigationPage.scan &&
+              _scanState.showRealScanButton)
             RealScanButton(
               _scanState,
               _dialogHandler,
