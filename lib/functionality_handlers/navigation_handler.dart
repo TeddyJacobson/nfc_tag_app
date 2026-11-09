@@ -32,12 +32,7 @@ class NavigationHandler {
   void updatePage() {
     pageWidget = switch (currentPage) {
       // TODO: This whole map widget (and the others) should be abstracted in another file
-      NavigationPage.map => Stack(
-        children: [
-          Center(child: Text('Map')),
-          Center(child: MapPlaceHolder(persistentStorageOutput)),
-        ]
-      ),
+      NavigationPage.map => MapPage(persistentStorageOutput),
       NavigationPage.scan => Center(child: Text('Scan Tag')),
       NavigationPage.myTags => Center(child: Text('My Tags')),
     };

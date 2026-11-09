@@ -1,24 +1,50 @@
-/// TODO: Right now, everything in this file is just a placeholder to test streams
-
 import 'package:flutter/material.dart';
 
 import '/local_database/database.dart';
 
-/// Notice, there is a Center widget also being added in the same place as this placeholder
-/// Widget, but that Center widget just has empty text. See navigation_bar.dart for more
-/// context.
-class MapPlaceHolder extends StreamBuilder {
-  MapPlaceHolder(Stream<List<TagTableData>> stream, {super.key})
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+class MapPage extends StreamBuilder {
+  MapPage(Stream<List<TagTableData>> stream, {super.key})
     : super(
         stream: stream,
         builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.waiting &&
-              snapshot.connectionState != ConnectionState.none) {
-            return Text('${snapshot.data}');
-          }
-          // Satisfying the Flutter Build conditions
-          // With how lists are relayed through streams, this should never show
-          return Text('Map info will go here');
+          return Center(child: KMap(context));
         },
+      );
+}
+
+class KMap extends FlutterMap {
+  KMap(BuildContext context, {super.key})
+    : super(
+        options: MapOptions(
+          initialCenter: LatLng(
+            // Centering the map in the center of campus
+            42.2903937,
+            -85.6014676,
+          ),
+          initialZoom: 9.2,
+        ),
+
+        children: [
+          TileLayer(
+            // Getter raster tiles from online
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            // Assigning an identifier to not have traffic blocked
+            userAgentPackageName: 'com.kscavengerhunt.app',
+          ),
+          RichAttributionWidget(
+            // A prebuilt attribution widget to meet TOS of provider
+            attributions: [
+              TextSourceAttribution(
+                'OpenStreetMap contributors',
+                onTap: () =>
+                    launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
+              ),
+            ],
+          ),
+        ],
       );
 }
