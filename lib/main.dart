@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nfc_manager/nfc_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'functionality_handlers/dialog_handler.dart';

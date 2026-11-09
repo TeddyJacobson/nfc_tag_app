@@ -21,6 +21,8 @@ class NfcInteractionHandler {
   final StreamController<TagResponse> controller =
       StreamController<TagResponse>();
   Stream<TagResponse> get stream => controller.stream;
+
+  bool isSessionActive = false;
   bool scanning = false;
 
   // Setting up for NFC interaction with a systems local database
@@ -49,9 +51,10 @@ class NfcInteractionHandler {
         pollingOptions: {NfcPollingOption.iso14443},
         onDiscovered: updateNFCStream,
       );
+      isSessionActive = true;
     } else {
       log(
-        'NFC interaction is not online. Availability: $nfcAvailability.',
+        'NFC interaction is not enabled. Availability: $nfcAvailability.',
         level: 900, // Level 900 is warning; ideally we would use package:logging in production code
       );
     }
