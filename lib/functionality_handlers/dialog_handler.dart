@@ -104,13 +104,18 @@ class _ValidTagDialog extends AlertDialog {
   _ValidTagDialog({required this.context, required this.tagRes, super.key})
     : super(
         title: Center(
-          child: Text('Tag Details', style: GoogleFonts.huninn(fontSize: 24)),
-        ),
-        content: SizedBox(
-          width: 300,
-          height: 500,
           child: Text(
-            'ID: ${tagRes.tagInfo!.id}, Latitude: ${tagRes.tagInfo!.latitude}, Longitude: ${tagRes.tagInfo!.longitude}, Title: ${tagRes.tagInfo!.title}, Description: ${tagRes.tagInfo!.description}, Creation Timestamp: ${tagRes.tagInfo!.creationTimestamp}',
+            tagRes.tagInfo!.title,
+            style: GoogleFonts.huninn(color: Colors.teal, fontSize: 24),
+          ),
+        ),
+        content: FractionallySizedBox(
+          widthFactor: 1,
+          heightFactor: .75,
+          child: SingleChildScrollView(
+            child: Text(
+              'Location: ${tagRes.tagInfo!.latitude}, ${tagRes.tagInfo!.longitude}\n${tagRes.tagInfo!.description}',
+            ),
           ),
         ),
         actions: [
