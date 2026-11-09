@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nfc_tap_app/functionality_handlers/dialog_handler.dart';
-import 'package:nfc_tap_app/functionality_handlers/nfc_scan_handler.dart';
+
+import 'functionality_handlers/dialog_handler.dart';
+import 'functionality_handlers/nfc_scan_handler.dart';
+import 'functionality_handlers/navigation_handler.dart';
 
 class RealScanButton extends Center {
   RealScanButton(
@@ -35,10 +37,10 @@ class RealScanButton extends Center {
 
 class BottomScanButton extends IgnorePointer {
   BottomScanButton(
+    void Function(void Function()) setState,
     ScanState scanState,
     bool mounted,
-    void Function(void Function()) setState,
-    void Function(int index) changePage,
+    NavigationHandler navigationHandler,
   ) : super(
         ignoring: !scanState.showScanButton,
         child: MouseRegion(
@@ -77,7 +79,7 @@ class BottomScanButton extends IgnorePointer {
                     setState(() {
                       scanState.scanButtonPressed = true;
                     });
-                    changePage(1);
+                    navigationHandler.currentPage = NavigationPage.scan;
                   },
                   child: const Icon(Icons.nfc, size: 32),
                 ),
@@ -95,7 +97,7 @@ class ScanState {
   bool removeScanButton = false;
   bool showRealScanButton = false;
 
-  void setToShowState() {
+  void showBottomButton() {
     showScanButton = true;
     scanButtonHovered = false;
     scanButtonPressed = false;

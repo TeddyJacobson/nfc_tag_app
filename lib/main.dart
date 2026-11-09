@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'functionality_handlers/dialog_handler.dart';
 import 'functionality_handlers/lifecycle_handler.dart';
 import 'functionality_handlers/nfc_scan_handler.dart';
+import 'functionality_handlers/navigation_handler.dart';
 
 import 'local_database/database.dart';
 
@@ -15,11 +16,9 @@ import 'map_display.dart';
 
 import 'firebase_options.dart';
 
-NFCApp _nfcApp = NFCApp();
-
 // Accessing the systems local database
 final AppDatabase database = AppDatabase();
-Stream<List<TagTableData>>? persistentStorageOutput;
+Stream<List<TagTableData>>? _persistentStorageOutput;
 
 // One stop shop for accessing tag info
 final NfcInteractionHandler _tagInteractionHandler = NfcInteractionHandler(database);
@@ -32,14 +31,14 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Setup a stream to watch
-  persistentStorageOutput = await database.getStream();
+  _persistentStorageOutput = await database.getStream();
 
   // Start an NFC session
   await NfcManager.instance.checkAvailability();
   _tagInteractionHandler.startSession();
 
   // Run the app
-  runApp(_nfcApp);
+  runApp(NFCApp());
 }
 
 class NFCApp extends StatelessWidget {
@@ -80,18 +79,13 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;
   final ScanState _scanState = ScanState();
   final DialogHandler _dialogHandler = DialogHandler();
+  late final NavigationHandler _navigationHandler;
 
-  // TODO: Rename and refactor menu items into classes
-  void _changePage(int index) {
-    setState(() {
-      _currentIndex = index; //the index of what page the user is looking at
-      if (_currentIndex != 1) {
-        _scanState.setToShowState();
-      }
-    });
+  // Use constructor to initialize _navigationHandler with _scanState
+  _MainScreenState() {
+    _navigationHandler = NavigationHandler(setState, _scanState, _persistentStorageOutput!);
   }
 
   @override
@@ -104,24 +98,21 @@ class _MainScreenState extends State<MainScreen> {
 
           LifecycleHandler(tagStreamHandler: _tagInteractionHandler),
 
-          MainNavigationBar.navigation_pages[_currentIndex],
+          _navigationHandler.pageWidget,
 
-          if (_currentIndex == 1 && _scanState.showRealScanButton)
+          if (_navigationHandler.currentPage == NavigationPage.scan && _scanState.showRealScanButton)
             RealScanButton(
               _scanState,
               _dialogHandler,
               _tagInteractionHandler,
               context,
             ),
-          
-          if(_currentIndex == 0)
-            MapPlaceHolder(persistentStorageOutput!)
         ],
       ),
-      bottomNavigationBar: MainNavigationBar(_currentIndex, _changePage),
+      bottomNavigationBar: MainNavigationBar(_navigationHandler),
       floatingActionButton: _scanState.removeScanButton
           ? null
-          : BottomScanButton(_scanState, mounted, setState, _changePage),
+          : BottomScanButton(setState, _scanState, mounted, _navigationHandler),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
