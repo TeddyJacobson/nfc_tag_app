@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:nfc_manager/ndef_record.dart';
 import 'package:nfc_manager/nfc_manager.dart';
@@ -9,9 +10,9 @@ import '/local_database/database.dart';
 
 import '../firebase_functions.dart';
 
-final String _invalidScan =
+const String _invalidScan =
     "Looks like you just tried to scan an NFC tag that isn't used for the K Scavenger Hunt... Please close the app if you want to use a tag for something else!";
-final String _notScanning =
+const String _notScanning =
     "Looks like you just tried to scan a valid NFC tag... Please press the NFC search button in the center of the navigation bar below!";
 
 // A class for controlling the operations of NFC scans
@@ -36,18 +37,29 @@ class NfcInteractionHandler {
     }
   }
 
-  // Start scanning for NFC tags
-  void startSession() {
-    print("Session begun");
-    NfcManager.instance.startSession(
-      pollingOptions: {NfcPollingOption.iso14443},
-      onDiscovered: updateNFCStream,
-    );
+  // TODO: Set an instance variable that tracks whether a session is active
+  /// Start scanning for NFC tags
+  Future<void> startSession() async {
+    NfcAvailability nfcAvailability = await NfcManager.instance
+        .checkAvailability();
+
+    if (nfcAvailability == NfcAvailability.enabled) {
+      print("NFC session begun");
+      NfcManager.instance.startSession(
+        pollingOptions: {NfcPollingOption.iso14443},
+        onDiscovered: updateNFCStream,
+      );
+    } else {
+      log(
+        'NFC interaction is not online. Availability: $nfcAvailability.',
+        level: 900, // Level 900 is warning; ideally we would use package:logging in production code
+      );
+    }
   }
 
-  // Stop scanning for NFC tags
+  /// Stop scanning for NFC tags
   void endSession() {
-    print("Session ended");
+    print("NFC session ended");
     NfcManager.instance.stopSession();
   }
 
