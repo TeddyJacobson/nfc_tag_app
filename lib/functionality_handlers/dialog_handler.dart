@@ -124,7 +124,7 @@ class _ValidTagDialog extends AlertDialog {
                dialogOps.currentlyDisplayed = false;
                Navigator.of(context).pop();
              },
-             child: Text('Close'),
+             child: Text('Close', style: GoogleFonts.huninn(fontSize: 16)),
            ),
          ],
        );
@@ -141,12 +141,17 @@ class _InvalidTagDialog extends AlertDialog {
     super.key,
   }) : super(
          title: Center(
-           child: Text('Tag Details', style: GoogleFonts.huninn(fontSize: 24)),
+           child: Text('Oops!', style: GoogleFonts.huninn(fontSize: 24)),
          ),
-         content: SizedBox(
-           width: 300,
-           height: 500,
-           child: Text('${tagRes.message}'),
+         content: FractionallySizedBox(
+           widthFactor: 1,
+           heightFactor: .25,
+           child: SingleChildScrollView(
+             child: Text(
+               '${tagRes.message}',
+               style: GoogleFonts.huninn(fontSize: 16),
+             ),
+           ),
          ),
          actions: [
            TextButton(
@@ -155,7 +160,7 @@ class _InvalidTagDialog extends AlertDialog {
                dialogOps.currentlyDisplayed = false;
                Navigator.of(context).pop();
              },
-             child: Text('Close'),
+             child: Text('Close', style: GoogleFonts.huninn(fontSize: 16)),
            ),
          ],
        );

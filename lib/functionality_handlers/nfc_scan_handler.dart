@@ -9,8 +9,10 @@ import '/local_database/database.dart';
 
 import '../firebase_functions.dart';
 
-// TODO: Construct messages for failed scans
-final String _failToScan = 'This is a placeholder String. The tag failed :)';
+final String _invalidScan =
+    "Looks like you just tried to scan an NFC tag that isn't used for the K Scavenger Hunt... Please close the app if you want to use a tag for something else!";
+final String _notScanning =
+    "Looks like you just tried to scan a valid NFC tag... Please press the NFC search button in the center of the navigation bar below!";
 
 // A class for controlling the operations of NFC scans
 class NfcInteractionHandler {
@@ -94,23 +96,18 @@ class NfcInteractionHandler {
         } else {
           // TODO: Remove this test print
           systemDatabase.printCurrentList();
-          return TagResponse(
-            null,
-            "You should try clicking the scan button :)",
-          );
+          return TagResponse(null, _notScanning);
         }
       }
       // Tag ID wasn't valid
       else {
         // TODO: Remove this test print
         systemDatabase.printCurrentList();
-        return TagResponse(null, _failToScan);
+        return TagResponse(null, _invalidScan);
       }
     } else {
-      // TODO: Remove this test print
-      systemDatabase.printCurrentList();
       // This should never occur
-      return TagResponse(null, _failToScan);
+      return TagResponse(null, _invalidScan);
     }
   }
 }
