@@ -25,13 +25,14 @@ class KMap extends FlutterMap {
             42.2903937,
             -85.6014676,
           ),
-          initialZoom: 9.2,
+          initialZoom: 10,
         ),
 
         children: [
           TileLayer(
             // Getter raster tiles from online
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            urlTemplate:
+                'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
             // Assigning an identifier to not have traffic blocked
             userAgentPackageName: 'com.kscavengerhunt.app',
           ),
