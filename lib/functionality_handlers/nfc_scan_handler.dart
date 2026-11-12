@@ -34,7 +34,17 @@ class NfcInteractionHandler {
     if (response.tagInfo == null && response.message == null) {
       // Things went all wrong. Freak out.
     } else {
-      // A tag response was
+      // Add the valid tag response
+      controller.sink.add(response);
+    }
+  }
+
+  void simulateTextNfcScan(String text) async {
+    TagResponse response = await _getTagResponseById(text);
+    if (response.tagInfo == null && response.message == null) {
+      // Things went all wrong. Freak out.
+    } else {
+      // Add the valid tag response
       controller.sink.add(response);
     }
   }

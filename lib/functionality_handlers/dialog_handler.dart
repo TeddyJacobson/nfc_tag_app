@@ -129,12 +129,11 @@ class _DebugScanDialog extends AlertDialog {
   final BuildContext context;
   final NfcInteractionHandler tagInteractionHandler;
 
-  /// TODO: Stub
-  static void _simulateTextNfcScan(
+  static void _scanText(
     String text,
     NfcInteractionHandler tagInteractionHandler,
   ) {
-    print('TODO: This should simulate scanning "$text"');
+    tagInteractionHandler.simulateTextNfcScan(text);
   }
 
   _DebugScanDialog({
@@ -157,7 +156,7 @@ class _DebugScanDialog extends AlertDialog {
                ),
                TextField(
                  onSubmitted: (text) {
-                   _simulateTextNfcScan(text, tagInteractionHandler);
+                   _scanText(text, tagInteractionHandler);
                  },
                  controller: textEditingController,
                  decoration: InputDecoration(
@@ -174,7 +173,7 @@ class _DebugScanDialog extends AlertDialog {
          actions: [
            TextButton(
              onPressed: () {
-               _simulateTextNfcScan(
+               _scanText(
                  textEditingController.text,
                  tagInteractionHandler,
                );
