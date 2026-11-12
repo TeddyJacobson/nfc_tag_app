@@ -82,46 +82,54 @@ class NfcInteractionHandler {
       // SUCCESS
       // Get the text stored within the tag
       final List<NdefRecord> nDefRecords = tagNDEF.cachedMessage!.records;
-      String tagID = "";
+      String tagId = "";
 
       // Start reading message at 3 cause NFC adds extra letters
       for (int i = 3; i < nDefRecords[0].payload.length; i++) {
         int uniCode = nDefRecords[0].payload[i];
-        tagID += String.fromCharCode(uniCode);
+        tagId += String.fromCharCode(uniCode);
       }
 
-      // Verify tag is 32 hex digits before looking up
-      if (isTagIdFormatValid(tagID)) {
-        if (scanning) {
-          try {
-            // Attempting to get the tag from the external firebase database
-            final tagData = await getTagById(tagID);
-            // Saving result to the systems internal sqlite database
-            await systemDatabase.insertTag(tagData);
-            // TODO: Remove this test print
-            systemDatabase.printCurrentList();
-
-            return TagResponse(tagData, null);
-          } on IdNotFoundException catch (e) {
-            // TODO: Remove this test print
-            systemDatabase.printCurrentList();
-            // TODO: This hasn't been tested in a while and should be again
-            return TagResponse(null, "That is an invalid ID code");
-          }
-        } else {
-          // TODO: Remove this test print
-          systemDatabase.printCurrentList();
-          return TagResponse(null, _notScanning);
-        }
-      }
-      // Tag ID wasn't valid
-      else {
-        // TODO: Remove this test print
-        systemDatabase.printCurrentList();
-        return TagResponse(null, _invalidScan);
-      }
+      return _getTagResponseById(tagId);
     } else {
       // This should never occur
+      log(
+        'tagNDEF is null! This should supposedly never occur.',
+        level: 900, // Level 900 is warning; ideally we would use package:logging in production code
+      );
+      return TagResponse(null, _invalidScan);
+    }
+  }
+
+  Future<TagResponse> _getTagResponseById(String tagId) async {
+    // Verify tag is 32 hex digits before looking up
+    if (isTagIdFormatValid(tagId)) {
+      if (scanning) {
+        try {
+          // Attempting to get the tag from the external firebase database
+          final tagData = await getTagById(tagId);
+          // Saving result to the systems internal sqlite database
+          await systemDatabase.insertTag(tagData);
+          // TODO: Remove this test print
+          systemDatabase.printCurrentList();
+
+          return TagResponse(tagData, null);
+        } on IdNotFoundException catch (e) {
+          // TODO: Remove this test print
+          systemDatabase.printCurrentList();
+          // TODO: This hasn't been tested in a while and should be again
+          return TagResponse(null, "That is an invalid ID code");
+        }
+      } else {
+        // TODO: Remove this test print
+        systemDatabase.printCurrentList();
+        return TagResponse(null, _notScanning);
+      }
+    }
+    // Tag ID wasn't valid
+    else {
+      // TODO: Remove this test print
+      systemDatabase.printCurrentList();
       return TagResponse(null, _invalidScan);
     }
   }
