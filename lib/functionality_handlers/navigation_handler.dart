@@ -13,7 +13,11 @@ class NavigationHandler {
   final ScanState scanState;
   final Stream<List<TagTableData>> persistentStorageOutput;
 
-  NavigationHandler(this.setState, this.scanState, this.persistentStorageOutput) {
+  NavigationHandler(
+    this.setState,
+    this.scanState,
+    this.persistentStorageOutput,
+  ) {
     // Initialize pageWidget and ensure proper scanState
     updatePage();
   }
@@ -36,7 +40,7 @@ class NavigationHandler {
         children: [
           Center(child: Text('Map')),
           Center(child: MapPlaceHolder(persistentStorageOutput)),
-        ]
+        ],
       ),
       NavigationPage.scan => Center(child: Text('Scan Tag')),
       NavigationPage.myTags => Center(child: Text('My Tags')),
@@ -48,8 +52,4 @@ class NavigationHandler {
   }
 }
 
-enum NavigationPage {
-  map,
-  scan,
-  myTags,
-}
+enum NavigationPage { map, scan, myTags }
