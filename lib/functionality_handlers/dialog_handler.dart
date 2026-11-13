@@ -240,7 +240,7 @@ class _ValidTagDialog extends AlertDialog {
           heightFactor: .75,
           child: SingleChildScrollView(
             child: Text(
-              'Location: ${tagRes.tagInfo!.latitude}, ${tagRes.tagInfo!.longitude}\n${tagRes.tagInfo!.description}',
+              'Location: ${tagRes.tagInfo!.latitude}, ${tagRes.tagInfo!.longitude}\n\n${tagRes.tagInfo!.description}',
             ),
           ),
         ),
