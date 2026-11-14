@@ -28,21 +28,32 @@ class KMap extends FlutterMap {
         options: MapOptions(
           initialCenter: LatLng(
             // Centering the map in the center of campus
-            42.2903937,
-            -85.6014676,
+            42.290376, -85.599611
           ),
-          initialZoom: 16,
+          initialZoom: 15.75,
+          maxZoom: 18,
+          minZoom: 15.75,
+          interactionOptions: InteractionOptions(
+            flags: ~InteractiveFlag.rotate,
+          ),
+          cameraConstraint: CameraConstraint.contain(
+            bounds: LatLngBounds(
+              LatLng(42.28121, -85.61212),
+              LatLng(42.29953, -85.58770),
+            ),
+          ),
         ),
 
         children: [
           TileLayer(
             // Using the locally stored tile set
             tileProvider: tileSetHandler.tileProvider,
-            // Getter raster tiles from online
-            // urlTemplate:
-            //     'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
-            // // Assigning an identifier to not have traffic blocked
-            // userAgentPackageName: 'com.kscavengerhunt.app',
+
+            // Specifying the tile bounds
+            tileBounds: LatLngBounds(
+              LatLng(42.28121, -85.61212),
+              LatLng(42.29953, -85.58770),
+            ),
           ),
           RichAttributionWidget(
             // A prebuilt attribution widget to meet TOS of provider
