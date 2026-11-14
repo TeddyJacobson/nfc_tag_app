@@ -13,13 +13,13 @@ class StreamedDialog extends StreamBuilder {
           if (snapshot.connectionState != ConnectionState.waiting &&
               snapshot.connectionState != ConnectionState.none) {
             if (dialogHandler.currentlyHeldTag != snapshot.data) {
-              dialogHandler.dialogOps.shouldShowDialog = true;
+              dialogHandler.dialogOps.tagShouldShowDialog = true;
               dialogHandler.currentlyHeldTag = snapshot.data;
             }
 
-            if (dialogHandler.dialogOps.shouldShowDialog &&
-                !dialogHandler.dialogOps.currentlyDisplayed) {
-              dialogHandler.dialogOps.currentlyDisplayed = true;
+            if (dialogHandler.dialogOps.tagShouldShowDialog &&
+                !dialogHandler.dialogOps.tagCurrentlyDisplayed) {
+              dialogHandler.dialogOps.tagCurrentlyDisplayed = true;
               // Due to the terrible nature of ShowDialog, scheduling a dialog popup
               // after the current frame is drawn
               WidgetsBinding.instance.addPostFrameCallback((_) {
