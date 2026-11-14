@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'tile_set_handler.dart';
+
 import '../scan_button.dart';
 import '../map_display.dart';
 import '../local_database/database.dart';
@@ -12,8 +14,14 @@ class NavigationHandler {
   final void Function(void Function()) setState;
   final ScanState scanState;
   final Stream<List<TagTableData>> persistentStorageOutput;
+  final TileSetHandler tileSetHandler;
 
-  NavigationHandler(this.setState, this.scanState, this.persistentStorageOutput) {
+  NavigationHandler(
+    this.setState,
+    this.scanState,
+    this.persistentStorageOutput,
+    this.tileSetHandler,
+  ) {
     // Initialize pageWidget and ensure proper scanState
     updatePage();
   }
@@ -32,7 +40,7 @@ class NavigationHandler {
   void updatePage() {
     pageWidget = switch (currentPage) {
       // TODO: This whole map widget (and the others) should be abstracted in another file
-      NavigationPage.map => MapPage(persistentStorageOutput),
+      NavigationPage.map => MapPage(persistentStorageOutput, tileSetHandler),
       NavigationPage.scan => Center(child: Text('Scan Tag')),
       NavigationPage.myTags => Center(child: Text('My Tags')),
     };
@@ -43,8 +51,4 @@ class NavigationHandler {
   }
 }
 
-enum NavigationPage {
-  map,
-  scan,
-  myTags,
-}
+enum NavigationPage { map, scan, myTags }

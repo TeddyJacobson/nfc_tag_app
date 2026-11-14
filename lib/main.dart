@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:nfc_manager/nfc_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'functionality_handlers/dialog_handler.dart';
 import 'functionality_handlers/lifecycle_handler.dart';
 import 'functionality_handlers/nfc_scan_handler.dart';
 import 'functionality_handlers/navigation_handler.dart';
+import 'functionality_handlers/tile_set_handler.dart';
 
 import 'local_database/database.dart';
 
 import 'streamed_dialog.dart';
 import 'navigation_bar.dart';
 import 'scan_button.dart';
-import 'map_display.dart';
 
 import 'firebase_options.dart';
 
@@ -24,6 +23,9 @@ Stream<List<TagTableData>>? _persistentStorageOutput;
 final NfcInteractionHandler _tagInteractionHandler = NfcInteractionHandler(
   database,
 );
+
+// One stop shop for interacting with the map tile set
+final TileSetHandler _tileSetHandler = TileSetHandler();
 
 void main() async {
   // Ensuring binding is initialized before the app is ran
@@ -37,6 +39,9 @@ void main() async {
 
   // Start an NFC session
   await _tagInteractionHandler.startSession();
+
+  // Connecting to the local tile set for mapping
+  await _tileSetHandler.establishLocalConnection();
 
   // Run the app
   runApp(NFCApp());
@@ -90,6 +95,7 @@ class _MainScreenState extends State<MainScreen> {
       setState,
       _scanState,
       _persistentStorageOutput!,
+      _tileSetHandler
     );
   }
 
