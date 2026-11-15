@@ -58,6 +58,15 @@ class _TagCard extends Card {
                   _truncateWithEllipsis(tagData.description as String, 200),
                   style: GoogleFonts.huninn(fontSize: 16),
                 ),
+          onTap: () => showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return ValidTagDialog(
+                context: context,
+                tagInfo: localToFirebaseTag(tagData),
+              );
+            },
+          ),
         ),
       );
 }
