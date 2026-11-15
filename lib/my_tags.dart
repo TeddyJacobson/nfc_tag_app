@@ -14,12 +14,21 @@ class MyTags extends StreamBuilder {
             List<TagTableData> tags = snapshot.data;
 
             return Scaffold(
-              appBar: AppBar(title: const Text('My Scanned Tags')),
+              appBar: AppBar(
+                title: Text(
+                  'My Scanned Tags',
+                  style: GoogleFonts.huninn(fontSize: 24),
+                ),
+              ),
               body: tags.isEmpty
                   ? Center(
-                      child: Text(
-                        "It looks like you don't have any tags yet...\n"
-                        "Try using the NFC search button.",
+                      child: FractionallySizedBox(
+                        widthFactor: 0.8,
+                        child: Text(
+                          "It looks like you don't have any tags yet... "
+                          "Try using the NFC search button.",
+                          style: GoogleFonts.huninn(fontSize: 20),
+                        ),
                       ),
                     )
                   : _TagsListView(context: context, tags: tags),
