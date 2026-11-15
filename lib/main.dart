@@ -95,7 +95,7 @@ class _MainScreenState extends State<MainScreen> {
       setState,
       _scanState,
       _persistentStorageOutput!,
-      _tileSetHandler
+      _tileSetHandler,
     );
   }
 
@@ -124,7 +124,13 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: MainNavigationBar(_navigationHandler),
       floatingActionButton: _scanState.removeScanButton
           ? null
-          : BottomScanButton(setState, _scanState, mounted, _navigationHandler),
+          : BottomScanButton(
+              setState,
+              _scanState,
+              mounted,
+              _navigationHandler,
+              context,
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }

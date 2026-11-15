@@ -12,7 +12,7 @@ class RealScanButton extends Center {
     BuildContext context,
   ) : super(
         child: Transform.translate(
-          offset: const Offset(0, 96),
+          offset: const Offset(0, 92),
           child: AnimatedOpacity(
             opacity: scanState.showRealScanButton ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 300),
@@ -35,12 +35,21 @@ class RealScanButton extends Center {
       );
 }
 
+Offset calculateOffset(BuildContext context) {
+  final screenHeight = MediaQuery.of(context).size.height;
+  final buttonHeight = 80.0;
+
+  final offsetY = -(screenHeight / 2 - buttonHeight / 2) / buttonHeight;
+  return Offset(0, offsetY);
+}
+
 class BottomScanButton extends IgnorePointer {
   BottomScanButton(
     void Function(void Function()) setState,
     ScanState scanState,
     bool mounted,
     NavigationHandler navigationHandler,
+    BuildContext context,
   ) : super(
         ignoring: !scanState.showScanButton,
         child: MouseRegion(
@@ -48,7 +57,7 @@ class BottomScanButton extends IgnorePointer {
           onExit: (_) => setState(() => scanState.scanButtonHovered = false),
           child: AnimatedSlide(
             offset: scanState.scanButtonPressed
-                ? const Offset(0, -4)
+                ? calculateOffset(context)
                 : Offset.zero,
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
