@@ -62,7 +62,7 @@ class DialogHandler {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return _ValidTagDialog(
+          return ValidTagDialog(
             context: context,
             tagInfo: tagRes.tagInfo as GetTagByIdTag,
           );
@@ -227,11 +227,11 @@ class _FailedScanDialog extends AlertDialog {
       );
 }
 
-class _ValidTagDialog extends AlertDialog {
+class ValidTagDialog extends AlertDialog {
   final BuildContext context;
   final GetTagByIdTag tagInfo;
 
-  _ValidTagDialog({required this.context, required this.tagInfo, super.key})
+  ValidTagDialog({required this.context, required this.tagInfo, super.key})
     : super(
         title: Center(
           child: Text(

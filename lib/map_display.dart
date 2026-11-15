@@ -10,6 +10,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map_mbtiles/flutter_map_mbtiles.dart';
 
 import 'functionality_handlers/tile_set_handler.dart';
+import 'functionality_handlers/dialog_handler.dart';
+
+import 'dataconnect_generated/generated.dart';
 
 class MapPage extends StreamBuilder {
   MapPage(
@@ -45,7 +48,7 @@ class _KMap extends FlutterMap {
             polygons: [_KzooBounds()],
             invertedFill: Color.fromARGB(38, 0, 0, 0),
           ),
-          _MarkerLayer(tagList),
+          _MarkerLayer(context, tagList),
           _AttributionLayer(),
         ],
       );
@@ -73,9 +76,10 @@ class _MapOptions extends MapOptions {
 }
 
 class _MarkerLayer extends MarkerLayer {
-  _MarkerLayer(dynamic tagList) : super(markers: dataToMarkers(tagList));
+  _MarkerLayer(BuildContext context, dynamic tagList)
+    : super(markers: dataToMarkers(context, tagList));
 
-  static List<Marker> dataToMarkers(dynamic tagList) {
+  static List<Marker> dataToMarkers(BuildContext context, dynamic tagList) {
     if (tagList == null || tagList.isEmpty) {
       return [];
     }
@@ -90,8 +94,14 @@ class _MarkerLayer extends MarkerLayer {
                 size: 30,
                 color: Color.fromARGB(255, 234, 104, 32),
               ),
-              onTap: () => print(
-                'CALL TO THE POPUP FOR: ${tagDataEntry.title} w/ lat of ${tagDataEntry.latitude} and long of ${tagDataEntry.longitude}',
+              onTap: () => showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return ValidTagDialog(
+                    context: context,
+                    tagInfo: localToFirebaseTag(tagDataEntry),
+                  );
+                },
               ),
             ),
           ),

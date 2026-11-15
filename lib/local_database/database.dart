@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:firebase_data_connect/firebase_data_connect.dart';
 
 import '/dataconnect_generated/generated.dart';
 
@@ -63,7 +64,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   // Returns a stream to be watched
-  Future<Stream<List<TagTableData>>> getStream() async{
+  Future<Stream<List<TagTableData>>> getStream() async {
     return select(tagTable).watch();
   }
 
@@ -76,4 +77,17 @@ class AppDatabase extends _$AppDatabase {
       // If you need web support, see https://drift.simonbinder.eu/platforms/web/
     );
   }
+}
+
+/// Helper function to convert between the tag type used by the local database
+/// and the tag type created for Firebase operations thats used everywhere else.
+GetTagByIdTag localToFirebaseTag(TagTableData localData) {
+  return GetTagByIdTag(
+    id: localData.id,
+    latitude: localData.latitude,
+    longitude: localData.longitude,
+    title: localData.title,
+    description: localData.description,
+    creationTimestamp: Timestamp(0, 0),
+  );
 }
