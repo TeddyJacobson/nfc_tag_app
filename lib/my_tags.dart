@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '/local_database/database.dart';
+import 'functionality_handlers/dialog_handler.dart';
 
 class MyTags extends StreamBuilder {
   MyTags(Stream<List<TagTableData>> stream, {super.key})
@@ -15,11 +16,13 @@ class MyTags extends StreamBuilder {
             return Scaffold(
               appBar: AppBar(title: const Text('My Scanned Tags')),
               body: tags.isEmpty
-                  ? Text(
-                      "It looks like you don't have any tags yet...\n"
-                      "Try using the NFC search button.",
+                  ? Center(
+                      child: Text(
+                        "It looks like you don't have any tags yet...\n"
+                        "Try using the NFC search button.",
+                      ),
                     )
-                  : TagsListView(tags: tags),
+                  : _TagsListView(context: context, tags: tags),
             );
           }
           // Satisfying the Flutter Build conditions
@@ -29,15 +32,23 @@ class MyTags extends StreamBuilder {
       );
 }
 
-class TagsListView extends ListView {
-  TagsListView({required List<TagTableData> tags, super.key})
+class _TagsListView extends ListView {
+  _TagsListView({required context, required List<TagTableData> tags, super.key})
     : super(
-        children: tags.map((tagData) => TagCard(tagData: tagData)).toList(),
+        children:
+            tags
+                .map((tagData) => _TagCard(context: context, tagData: tagData))
+                .toList()
+              ..sort((a, b) => b.createdAt.compareTo(a.createdAt)),
       );
 }
 
-class TagCard extends Card {
-  TagCard({required TagTableData tagData, super.key})
+class _TagCard extends Card {
+  TagTableData tagData;
+
+  DateTime get createdAt => tagData.createdAt;
+
+  _TagCard({required context, required this.tagData, super.key})
     : super(
         child: ListTile(
           title: Text(tagData.title, style: GoogleFonts.huninn(fontSize: 24)),
