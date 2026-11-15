@@ -7,6 +7,7 @@ import '/local_database/database.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_map_mbtiles/flutter_map_mbtiles.dart';
 
 import 'functionality_handlers/tile_set_handler.dart';
 
@@ -50,7 +51,7 @@ class KMap extends FlutterMap {
         children: [
           TileLayer(
             // Using the locally stored tile set
-            tileProvider: tileSetHandler.tileProvider,
+            tileProvider: MbTilesTileProvider.fromPath(path: tileSetHandler.localPath),
 
             // Specifying the tile bounds
             tileBounds: LatLngBounds(

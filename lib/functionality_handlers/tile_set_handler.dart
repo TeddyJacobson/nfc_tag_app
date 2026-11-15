@@ -1,12 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:flutter_map_mbtiles/flutter_map_mbtiles.dart';
 import 'package:path_provider/path_provider.dart';
 
 class TileSetHandler {
   String localPath = "";
-  MbTilesTileProvider? tileProvider;
 
   Future<void> establishLocalConnection() async {
     // Grabbing the local directory for supplementary app files
@@ -22,9 +20,6 @@ class TileSetHandler {
     if (!fileExists) {
       await _importMBTiles(tileSetFile);
     }
-
-    // Declaring tile provider
-    tileProvider = MbTilesTileProvider.fromPath(path: localPath);
   }
 
   Future<void> _importMBTiles(File tileSetFile) async {
