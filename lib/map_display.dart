@@ -18,60 +18,96 @@ class MapPage extends StreamBuilder {
     super.key,
   }) : super(
          stream: stream,
-         builder: (context, snapshot) {
-           return Center(child: KMap(context, tileSetHandler));
+         builder: (context, AsyncSnapshot<dynamic> snapshot) {
+           return Center(child: _KMap(context, snapshot.data, tileSetHandler));
          },
        );
 }
 
-class KMap extends FlutterMap {
+class _KMap extends FlutterMap {
   final TileSetHandler tileSetHandler;
-  KMap(BuildContext context, this.tileSetHandler, {super.key})
+  _KMap(BuildContext context, dynamic tagList, this.tileSetHandler)
     : super(
-        options: MapOptions(
-          initialCenter: LatLng(
-            // Centering the map in the center of campus
-            42.291000,
-            -85.599611,
-          ),
-          initialZoom: 15.75,
-          maxZoom: 18,
-          minZoom: 15.75,
-          interactionOptions: InteractionOptions(
-            flags: ~InteractiveFlag.rotate,
-          ),
-          cameraConstraint: CameraConstraint.contain(
-            bounds: LatLngBounds(
-              LatLng(42.28121, -85.61212),
-              LatLng(42.29953, -85.58770),
-            ),
-          ),
-        ),
-
+        options: _MapOptions(),
         children: [
           TileLayer(
             // Using the locally stored tile set
-            tileProvider: MbTilesTileProvider.fromPath(path: tileSetHandler.localPath),
-
+            tileProvider: MbTilesTileProvider.fromPath(
+              path: tileSetHandler.localPath,
+            ),
             // Specifying the tile bounds
             tileBounds: LatLngBounds(
               LatLng(42.28121, -85.61212),
               LatLng(42.29953, -85.58770),
             ),
           ),
-          RichAttributionWidget(
-            // A prebuilt attribution widget to meet TOS of provider
-            attributions: [
-              TextSourceAttribution(
-                'OpenStreetMap contributors',
-                onTap: () =>
-                    launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
-              ),
-            ],
-          ),
           PolygonLayer(
             polygons: [_KzooBounds()],
             invertedFill: Color.fromARGB(38, 0, 0, 0),
+          ),
+          _MarkerLayer(tagList),
+          _AttributionLayer(),
+        ],
+      );
+}
+
+class _MapOptions extends MapOptions {
+  _MapOptions()
+    : super(
+        initialCenter: LatLng(
+          // Centering the map in the center of campus
+          42.291000,
+          -85.599611,
+        ),
+        initialZoom: 15.75,
+        maxZoom: 18,
+        minZoom: 15.75,
+        interactionOptions: InteractionOptions(flags: ~InteractiveFlag.rotate),
+        cameraConstraint: CameraConstraint.contain(
+          bounds: LatLngBounds(
+            LatLng(42.28121, -85.61212),
+            LatLng(42.29953, -85.58770),
+          ),
+        ),
+      );
+}
+
+class _MarkerLayer extends MarkerLayer {
+  _MarkerLayer(dynamic tagList) : super(markers: dataToMarkers(tagList));
+
+  static List<Marker> dataToMarkers(dynamic tagList) {
+    if (tagList == null || tagList.isEmpty) {
+      return [];
+    }
+
+    return tagList
+        .map<Marker>(
+          (tagDataEntry) => Marker(
+            point: LatLng(tagDataEntry.latitude, tagDataEntry.longitude),
+            child: GestureDetector(
+              child: Icon(
+                Icons.place,
+                size: 30,
+                color: Color.fromARGB(255, 234, 104, 32),
+              ),
+              onTap: () => print(
+                'CALL TO THE POPUP FOR: ${tagDataEntry.title} w/ lat of ${tagDataEntry.latitude} and long of ${tagDataEntry.longitude}',
+              ),
+            ),
+          ),
+        )
+        .toList();
+  }
+}
+
+class _AttributionLayer extends RichAttributionWidget {
+  _AttributionLayer()
+    : super(
+        attributions: [
+          TextSourceAttribution(
+            'OpenStreetMap contributors',
+            onTap: () =>
+                launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
           ),
         ],
       );
