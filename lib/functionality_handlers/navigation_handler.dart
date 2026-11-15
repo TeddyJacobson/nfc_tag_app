@@ -41,7 +41,6 @@ class NavigationHandler {
   /// Update the widget and scanState based on the current page
   void updatePage() {
     pageWidget = switch (currentPage) {
-      // TODO: This whole map widget (and the others) should be abstracted in another file
       NavigationPage.map => MapPage(persistentStorageOutput, tileSetHandler),
       NavigationPage.scan => Center(child: Text('Scan Tag')),
       NavigationPage.myTags => MyTags(persistentStorageOutput),

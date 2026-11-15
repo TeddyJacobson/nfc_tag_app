@@ -210,7 +210,6 @@ class _FailedScanDialog extends AlertDialog {
           heightFactor: .25,
           child: SingleChildScrollView(
             child: Text(
-              // TODO: We can actually check whether it is disabled or unavailable using checkAvailability
               'NFC scanning technology appears to be disabled or unavailable on this device! Please enable it in your settings if possible.',
               style: GoogleFonts.huninn(fontSize: 16),
             ),

@@ -57,12 +57,6 @@ class AppDatabase extends _$AppDatabase {
     return 0;
   }
 
-  //TODO: Remove this function as it just for testing
-  void printCurrentList() async {
-    List<TagTableData> allItems = await select(tagTable).get();
-    print('\n\n************** ITEMS IN DATABASE: $allItems\n\n');
-  }
-
   // Returns a stream to be watched
   Future<Stream<List<TagTableData>>> getStream() async {
     return select(tagTable).watch();
