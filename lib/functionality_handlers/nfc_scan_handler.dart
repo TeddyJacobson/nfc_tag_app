@@ -49,14 +49,12 @@ class NfcInteractionHandler {
     }
   }
 
-  // TODO: Set an instance variable that tracks whether a session is active
   /// Start scanning for NFC tags
   Future<void> startSession() async {
     NfcAvailability nfcAvailability = await NfcManager.instance
         .checkAvailability();
 
     if (nfcAvailability == NfcAvailability.enabled) {
-      print("NFC session begun");
       NfcManager.instance.startSession(
         pollingOptions: {NfcPollingOption.iso14443},
         onDiscovered: updateNFCStream,
@@ -72,7 +70,6 @@ class NfcInteractionHandler {
 
   /// Stop scanning for NFC tags
   void endSession() {
-    print("NFC session ended");
     NfcManager.instance.stopSession();
   }
 
@@ -116,27 +113,18 @@ class NfcInteractionHandler {
           // Attempting to get the tag from the external firebase database
           final tagData = await getTagById(tagId);
           // Saving result to the systems internal sqlite database
-          await systemDatabase.insertTag(tagData);
-          // TODO: Remove this test print
-          systemDatabase.printCurrentList();
+          await systemDatabase.insertTag(tagData);;
 
           return TagResponse(tagData, null);
         } on IdNotFoundException catch (e) {
-          // TODO: Remove this test print
-          systemDatabase.printCurrentList();
-          // TODO: This hasn't been tested in a while and should be again
           return TagResponse(null, "You tried to scan an invalid ID code. Please try a different tag.");
         }
       } else {
-        // TODO: Remove this test print
-        systemDatabase.printCurrentList();
         return TagResponse(null, _notScanning);
       }
     }
     // Tag ID wasn't valid
     else {
-      // TODO: Remove this test print
-      systemDatabase.printCurrentList();
       return TagResponse(null, _invalidScan);
     }
   }

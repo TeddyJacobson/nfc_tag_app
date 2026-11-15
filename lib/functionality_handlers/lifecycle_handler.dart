@@ -29,16 +29,10 @@ class _LifecycleHandler extends State<LifecycleHandler>
 
     // On the creation of the Main Screen, creates an observer to watch the whole app
     WidgetsBinding.instance.addObserver(this);
-
-    // TODO: Remove this
-    print("Initialized the observer");
   }
 
   @override
   void dispose() {
-    // TODO: Remove this
-    print("Removed the observer");
-
     // Removing the lifecyle observer to avoid memory leaks
     // Shouldn't be relevant since the lifecycle widget will
     // remain in the tree till complete app termination.
