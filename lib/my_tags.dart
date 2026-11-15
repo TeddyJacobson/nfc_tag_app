@@ -36,7 +36,12 @@ class MyTags extends StreamBuilder {
           }
           // Satisfying the Flutter Build conditions
           // With how lists are relayed through streams, this should never show
-          return Text('Map info will go here');
+          return Center(
+            child: Text(
+              'My tags info will go here',
+              style: GoogleFonts.huninn(fontSize: 20),
+            ),
+          );
         },
       );
 }

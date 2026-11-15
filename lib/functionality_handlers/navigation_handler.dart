@@ -42,7 +42,7 @@ class NavigationHandler {
   void updatePage() {
     pageWidget = switch (currentPage) {
       NavigationPage.map => MapPage(persistentStorageOutput, tileSetHandler),
-      NavigationPage.scan => Center(child: Text('Scan Tag')),
+      NavigationPage.scan => Center(child: Text('Scan Tag', style: GoogleFonts.huninn(fontSize: 24))),
       NavigationPage.myTags => MyTags(persistentStorageOutput),
     };
 

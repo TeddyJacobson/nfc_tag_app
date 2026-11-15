@@ -117,11 +117,16 @@ class _ScanDialog extends AlertDialog {
     required this.dialogOps,
     super.key,
   }) : super(
-         title: Center(child: const Text('Currently Scanning')),
+         title: Center(
+           child: Text(
+             'Currently Scanning',
+             style: GoogleFonts.huninn(fontSize: 24),
+           ),
+         ),
          // content: const Text('Scannning...'),
          actions: <Widget>[
            TextButton(
-             child: const Text('Cancel'),
+             child: Text('Cancel', style: GoogleFonts.huninn(fontSize: 16)),
              onPressed: () {
                Navigator.of(context).pop(); // Closes the popup
                tagInteractionHandler.scanning = false;
@@ -149,7 +154,12 @@ class _DebugScanDialog extends AlertDialog {
     required TextEditingController textEditingController,
     super.key,
   }) : super(
-         title: Center(child: const Text('Simulating Scanning')),
+         title: Center(
+           child: Text(
+             'Simulating Scanning',
+             style: GoogleFonts.huninn(color: Colors.teal, fontSize: 24),
+           ),
+         ),
          content: SingleChildScrollView(
            child: Column(
              crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +213,10 @@ class _FailedScanDialog extends AlertDialog {
   _FailedScanDialog({required this.context, super.key})
     : super(
         title: Center(
-          child: Text('Oops!', style: GoogleFonts.huninn(fontSize: 24)),
+          child: Text(
+            'Oops!',
+            style: GoogleFonts.huninn(color: Colors.teal, fontSize: 24),
+          ),
         ),
         content: FractionallySizedBox(
           widthFactor: 1,
@@ -244,6 +257,7 @@ class ValidTagDialog extends AlertDialog {
           child: SingleChildScrollView(
             child: Text(
               'Location: ${tagInfo.latitude}, ${tagInfo.longitude}\n\n${tagInfo.description}',
+              style: GoogleFonts.huninn(fontSize: 16),
             ),
           ),
         ),
@@ -268,7 +282,10 @@ class _InvalidTagDialog extends AlertDialog {
     super.key,
   }) : super(
          title: Center(
-           child: Text('Oops!', style: GoogleFonts.huninn(fontSize: 24)),
+           child: Text(
+             'Oops!',
+             style: GoogleFonts.huninn(color: Colors.teal, fontSize: 24),
+           ),
          ),
          content: FractionallySizedBox(
            widthFactor: 1,
