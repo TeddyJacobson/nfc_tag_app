@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nfc_tap_app/dataconnect_generated/generated.dart';
 
 import 'nfc_scan_handler.dart';
 
@@ -61,7 +62,10 @@ class DialogHandler {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return _ValidTagDialog(context: context, tagRes: tagRes);
+          return ValidTagDialog(
+            context: context,
+            tagInfo: tagRes.tagInfo as GetTagByIdTag,
+          );
         },
       ).then((unusedVal) {
         // Cleaning up when a dialog box is closed
@@ -74,7 +78,10 @@ class DialogHandler {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return _InvalidTagDialog(context: context, tagRes: tagRes);
+          return _InvalidTagDialog(
+            context: context,
+            failMessage: tagRes.message as String,
+          );
         },
       ).then((unusedVal) {
         // Cleaning up when a dialog box is closed
@@ -173,10 +180,7 @@ class _DebugScanDialog extends AlertDialog {
          actions: [
            TextButton(
              onPressed: () {
-               _scanText(
-                 textEditingController.text,
-                 tagInteractionHandler,
-               );
+               _scanText(textEditingController.text, tagInteractionHandler);
              },
              child: Text(
                'Simulate Scan',
@@ -223,15 +227,15 @@ class _FailedScanDialog extends AlertDialog {
       );
 }
 
-class _ValidTagDialog extends AlertDialog {
+class ValidTagDialog extends AlertDialog {
   final BuildContext context;
-  final TagResponse tagRes;
+  final GetTagByIdTag tagInfo;
 
-  _ValidTagDialog({required this.context, required this.tagRes, super.key})
+  ValidTagDialog({required this.context, required this.tagInfo, super.key})
     : super(
         title: Center(
           child: Text(
-            tagRes.tagInfo!.title,
+            tagInfo.title,
             style: GoogleFonts.huninn(color: Colors.teal, fontSize: 24),
           ),
         ),
@@ -240,7 +244,7 @@ class _ValidTagDialog extends AlertDialog {
           heightFactor: .75,
           child: SingleChildScrollView(
             child: Text(
-              'Location: ${tagRes.tagInfo!.latitude}, ${tagRes.tagInfo!.longitude}\n\n${tagRes.tagInfo!.description}',
+              'Location: ${tagInfo.latitude}, ${tagInfo.longitude}\n\n${tagInfo.description}',
             ),
           ),
         ),
@@ -257,30 +261,30 @@ class _ValidTagDialog extends AlertDialog {
 
 class _InvalidTagDialog extends AlertDialog {
   final BuildContext context;
-  final TagResponse tagRes;
+  final String failMessage;
 
-  _InvalidTagDialog({required this.context, required this.tagRes, super.key})
-    : super(
-        title: Center(
-          child: Text('Oops!', style: GoogleFonts.huninn(fontSize: 24)),
-        ),
-        content: FractionallySizedBox(
-          widthFactor: 1,
-          heightFactor: .25,
-          child: SingleChildScrollView(
-            child: Text(
-              '${tagRes.message}',
-              style: GoogleFonts.huninn(fontSize: 16),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Close', style: GoogleFonts.huninn(fontSize: 16)),
-          ),
-        ],
-      );
+  _InvalidTagDialog({
+    required this.context,
+    required this.failMessage,
+    super.key,
+  }) : super(
+         title: Center(
+           child: Text('Oops!', style: GoogleFonts.huninn(fontSize: 24)),
+         ),
+         content: FractionallySizedBox(
+           widthFactor: 1,
+           heightFactor: .25,
+           child: SingleChildScrollView(
+             child: Text(failMessage, style: GoogleFonts.huninn(fontSize: 16)),
+           ),
+         ),
+         actions: [
+           TextButton(
+             onPressed: () {
+               Navigator.of(context).pop();
+             },
+             child: Text('Close', style: GoogleFonts.huninn(fontSize: 16)),
+           ),
+         ],
+       );
 }

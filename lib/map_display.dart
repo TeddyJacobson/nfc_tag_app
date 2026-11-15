@@ -1,24 +1,182 @@
-/// TODO: Right now, everything in this file is just a placeholder to test streams
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
 import '/local_database/database.dart';
 
-/// Notice, there is a Center widget also being added in the same place as this placeholder
-/// Widget, but that Center widget just has empty text. See navigation_bar.dart for more
-/// context.
-class MapPlaceHolder extends StreamBuilder {
-  MapPlaceHolder(Stream<List<TagTableData>> stream, {super.key})
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_map_mbtiles/flutter_map_mbtiles.dart';
+
+import 'functionality_handlers/tile_set_handler.dart';
+import 'functionality_handlers/dialog_handler.dart';
+
+import 'dataconnect_generated/generated.dart';
+
+class MapPage extends StreamBuilder {
+  MapPage(
+    Stream<List<TagTableData>> stream,
+    TileSetHandler tileSetHandler, {
+    super.key,
+  }) : super(
+         stream: stream,
+         builder: (context, AsyncSnapshot<dynamic> snapshot) {
+           return Center(child: _KMap(context, snapshot.data, tileSetHandler));
+         },
+       );
+}
+
+class _KMap extends FlutterMap {
+  final TileSetHandler tileSetHandler;
+  _KMap(BuildContext context, dynamic tagList, this.tileSetHandler)
     : super(
-        stream: stream,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.waiting &&
-              snapshot.connectionState != ConnectionState.none) {
-            return Text('${snapshot.data}');
-          }
-          // Satisfying the Flutter Build conditions
-          // With how lists are relayed through streams, this should never show
-          return Text('Map info will go here');
-        },
+        options: _MapOptions(),
+        children: [
+          TileLayer(
+            // Using the locally stored tile set
+            tileProvider: MbTilesTileProvider.fromPath(
+              path: tileSetHandler.localPath,
+            ),
+            // Specifying the tile bounds
+            tileBounds: LatLngBounds(
+              LatLng(42.28121, -85.61212),
+              LatLng(42.29953, -85.58770),
+            ),
+          ),
+          PolygonLayer(
+            polygons: [_KzooBounds()],
+            invertedFill: Color.fromARGB(38, 0, 0, 0),
+          ),
+          _MarkerLayer(context, tagList),
+          _AttributionLayer(),
+        ],
+      );
+}
+
+class _MapOptions extends MapOptions {
+  _MapOptions()
+    : super(
+        initialCenter: LatLng(
+          // Centering the map in the center of campus
+          42.291000,
+          -85.599611,
+        ),
+        initialZoom: 15.75,
+        maxZoom: 18,
+        minZoom: 15.75,
+        interactionOptions: InteractionOptions(flags: ~InteractiveFlag.rotate),
+        cameraConstraint: CameraConstraint.contain(
+          bounds: LatLngBounds(
+            LatLng(42.28121, -85.61212),
+            LatLng(42.29953, -85.58770),
+          ),
+        ),
+      );
+}
+
+class _MarkerLayer extends MarkerLayer {
+  _MarkerLayer(BuildContext context, dynamic tagList)
+    : super(markers: dataToMarkers(context, tagList));
+
+  static List<Marker> dataToMarkers(BuildContext context, dynamic tagList) {
+    if (tagList == null || tagList.isEmpty) {
+      return [];
+    }
+
+    return tagList
+        .map<Marker>(
+          (tagDataEntry) => Marker(
+            point: LatLng(tagDataEntry.latitude, tagDataEntry.longitude),
+            child: GestureDetector(
+              child: Icon(
+                Icons.nfc,
+                size: 30,
+                color: Color.fromARGB(255, 234, 104, 32),
+              ),
+              onTap: () => showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return ValidTagDialog(
+                    context: context,
+                    tagInfo: localToFirebaseTag(tagDataEntry),
+                  );
+                },
+              ),
+            ),
+          ),
+        )
+        .toList();
+  }
+}
+
+class _AttributionLayer extends RichAttributionWidget {
+  _AttributionLayer()
+    : super(
+        attributions: [
+          TextSourceAttribution(
+            'OpenStreetMap contributors',
+            onTap: () =>
+                launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
+          ),
+        ],
+      );
+}
+
+// The precise bounds of the KZOO campus exported from the HOT map
+class _KzooBounds extends Polygon {
+  _KzooBounds()
+    : super(
+        borderColor: Color.fromARGB(255, 234, 104, 32),
+        borderStrokeWidth: 2,
+        pattern: StrokePattern.dotted(),
+        points: [
+          LatLng(42.28876, -85.6042151),
+          LatLng(42.2887587, -85.6039926),
+          LatLng(42.2887574, -85.6037777),
+          LatLng(42.2887542, -85.6032293),
+          LatLng(42.288754, -85.6030953),
+          LatLng(42.2887536, -85.6027409),
+          LatLng(42.2887534, -85.6026181),
+          LatLng(42.2887503, -85.6022669),
+          LatLng(42.2887525, -85.6013162),
+          LatLng(42.2887466, -85.5994477),
+          LatLng(42.2887462, -85.5993282),
+          LatLng(42.2888017, -85.5991756),
+          LatLng(42.2916423, -85.5948116),
+          LatLng(42.2916808, -85.5951363),
+          LatLng(42.2917776, -85.5959046),
+          LatLng(42.2917946, -85.5960443),
+          LatLng(42.2918839, -85.5967776),
+          LatLng(42.2920029, -85.5977084),
+          LatLng(42.2921122, -85.5986016),
+          LatLng(42.2921691, -85.5990334),
+          LatLng(42.2922285, -85.5995328),
+          LatLng(42.2922917, -85.6000646),
+          LatLng(42.292389, -85.6008202),
+          LatLng(42.2924361, -85.6011521),
+          LatLng(42.2919601, -85.6012214),
+          LatLng(42.2919562, -85.6013426),
+          LatLng(42.2918095, -85.6013834),
+          LatLng(42.2918024, -85.6014894),
+          LatLng(42.2914962, -85.6015319),
+          LatLng(42.2915014, -85.6017842),
+          LatLng(42.2910207, -85.6018711),
+          LatLng(42.2910301, -85.6025132),
+          LatLng(42.290494, -85.6026016),
+          LatLng(42.2904427, -85.6026097),
+          LatLng(42.2903682, -85.6026214),
+          LatLng(42.2903578, -85.6029706),
+          LatLng(42.290347, -85.6033334),
+          LatLng(42.2903466, -85.6039763),
+          LatLng(42.2903466, -85.6041374),
+          LatLng(42.2903465, -85.6042567),
+          LatLng(42.2898098, -85.6042502),
+          LatLng(42.2895618, -85.6042418),
+          LatLng(42.2893392, -85.6042344),
+          LatLng(42.2890371, -85.6042243),
+          LatLng(42.2890029, -85.6042232),
+          LatLng(42.28876, -85.6042151),
+        ],
       );
 }

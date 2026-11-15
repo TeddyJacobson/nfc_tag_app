@@ -47,7 +47,9 @@ class BottomScanButton extends IgnorePointer {
           onEnter: (_) => setState(() => scanState.scanButtonHovered = true),
           onExit: (_) => setState(() => scanState.scanButtonHovered = false),
           child: AnimatedSlide(
-            offset: scanState.scanButtonPressed ? const Offset(0, -4) : Offset.zero,
+            offset: scanState.scanButtonPressed
+                ? const Offset(0, -4)
+                : Offset.zero,
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             onEnd: () {
@@ -58,7 +60,8 @@ class BottomScanButton extends IgnorePointer {
                 });
 
                 Future.delayed(const Duration(milliseconds: 100), () {
-                  if (mounted) {
+                  if (mounted &&
+                      navigationHandler.currentPage == NavigationPage.scan) {
                     setState(() {
                       scanState.removeScanButton = true;
                     });
@@ -68,7 +71,9 @@ class BottomScanButton extends IgnorePointer {
             },
             child: AnimatedScale(
               // TODO: Use some switch functionality if possible
-              scale: scanState.scanButtonPressed ? 2.5 : (scanState.scanButtonHovered ? 1.25 : 1.0),
+              scale: scanState.scanButtonPressed
+                  ? 2.5
+                  : (scanState.scanButtonHovered ? 1.25 : 1.0),
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
               child: Opacity(

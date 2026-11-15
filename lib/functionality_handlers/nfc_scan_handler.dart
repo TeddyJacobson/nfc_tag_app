@@ -86,9 +86,10 @@ class NfcInteractionHandler {
 */
   Future<TagResponse> getTagInfo(NfcTag tag) async {
     // Getting the exchange format info if provided
+    
     final Ndef? tagNDEF = Ndef.from(tag);
 
-    if (tagNDEF != null) {
+    if (tagNDEF != null && tagNDEF.cachedMessage != null) {
       // SUCCESS
       // Get the text stored within the tag
       final List<NdefRecord> nDefRecords = tagNDEF.cachedMessage!.records;
@@ -102,11 +103,7 @@ class NfcInteractionHandler {
 
       return _getTagResponseById(tagId);
     } else {
-      // This should never occur
-      log(
-        'tagNDEF is null! This should supposedly never occur.',
-        level: 900, // Level 900 is warning; ideally we would use package:logging in production code
-      );
+      // Occurs on null scans
       return TagResponse(null, _invalidScan);
     }
   }
@@ -128,7 +125,7 @@ class NfcInteractionHandler {
           // TODO: Remove this test print
           systemDatabase.printCurrentList();
           // TODO: This hasn't been tested in a while and should be again
-          return TagResponse(null, "That is an invalid ID code");
+          return TagResponse(null, "You tried to scan an invalid ID code. Please try a different tag.");
         }
       } else {
         // TODO: Remove this test print
