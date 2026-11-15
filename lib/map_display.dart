@@ -86,7 +86,7 @@ class _MarkerLayer extends MarkerLayer {
             point: LatLng(tagDataEntry.latitude, tagDataEntry.longitude),
             child: GestureDetector(
               child: Icon(
-                Icons.place,
+                Icons.nfc,
                 size: 30,
                 color: Color.fromARGB(255, 234, 104, 32),
               ),
