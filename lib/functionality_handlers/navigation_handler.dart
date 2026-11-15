@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../scan_button.dart';
 import '../map_display.dart';
+import '../scan_button.dart';
+import '../my_tags.dart';
 import '../local_database/database.dart';
 
 class NavigationHandler {
@@ -13,7 +14,11 @@ class NavigationHandler {
   final ScanState scanState;
   final Stream<List<TagTableData>> persistentStorageOutput;
 
-  NavigationHandler(this.setState, this.scanState, this.persistentStorageOutput) {
+  NavigationHandler(
+    this.setState,
+    this.scanState,
+    this.persistentStorageOutput,
+  ) {
     // Initialize pageWidget and ensure proper scanState
     updatePage();
   }
@@ -36,10 +41,10 @@ class NavigationHandler {
         children: [
           Center(child: Text('Map')),
           Center(child: MapPlaceHolder(persistentStorageOutput)),
-        ]
+        ],
       ),
       NavigationPage.scan => Center(child: Text('Scan Tag')),
-      NavigationPage.myTags => Center(child: Text('My Tags')),
+      NavigationPage.myTags => MyTags(persistentStorageOutput),
     };
 
     if (currentPage != NavigationPage.scan) {
@@ -48,8 +53,4 @@ class NavigationHandler {
   }
 }
 
-enum NavigationPage {
-  map,
-  scan,
-  myTags,
-}
+enum NavigationPage { map, scan, myTags }
