@@ -12,8 +12,6 @@ import 'package:flutter_map_mbtiles/flutter_map_mbtiles.dart';
 import 'functionality_handlers/tile_set_handler.dart';
 import 'functionality_handlers/dialog_handler.dart';
 
-import 'dataconnect_generated/generated.dart';
-
 class MapPage extends StreamBuilder {
   MapPage(
     Stream<List<TagTableData>> stream,

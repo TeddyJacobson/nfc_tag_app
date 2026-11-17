@@ -5,7 +5,6 @@ import 'tile_set_handler.dart';
 
 import '../scan_button.dart';
 import '../map_display.dart';
-import '../scan_button.dart';
 import '../my_tags.dart';
 import '../local_database/database.dart';
 
