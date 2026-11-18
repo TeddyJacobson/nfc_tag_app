@@ -221,10 +221,12 @@ class _FailedScanDialog extends AlertDialog {
         content: FractionallySizedBox(
           widthFactor: 1,
           heightFactor: .25,
-          child: SingleChildScrollView(
-            child: Text(
-              'NFC scanning technology appears to be disabled or unavailable on this device! Please enable it in your settings if possible.',
-              style: GoogleFonts.huninn(fontSize: 16),
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              child: Text(
+                'NFC scanning technology appears to be disabled or unavailable on this device! Please enable it in your settings if possible.',
+                style: GoogleFonts.huninn(fontSize: 16),
+              ),
             ),
           ),
         ),
@@ -254,10 +256,12 @@ class ValidTagDialog extends AlertDialog {
         content: FractionallySizedBox(
           widthFactor: 1,
           heightFactor: .75,
-          child: SingleChildScrollView(
-            child: Text(
-              'Location: ${tagInfo.latitude}, ${tagInfo.longitude}\n\n${tagInfo.description}',
-              style: GoogleFonts.huninn(fontSize: 16),
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              child: Text(
+                'Location: ${tagInfo.latitude}, ${tagInfo.longitude}\n\n${tagInfo.description}',
+                style: GoogleFonts.huninn(fontSize: 16),
+              ),
             ),
           ),
         ),
@@ -290,8 +294,13 @@ class _InvalidTagDialog extends AlertDialog {
          content: FractionallySizedBox(
            widthFactor: 1,
            heightFactor: .25,
-           child: SingleChildScrollView(
-             child: Text(failMessage, style: GoogleFonts.huninn(fontSize: 16)),
+           child: Scrollbar(
+             child: SingleChildScrollView(
+               child: Text(
+                 failMessage,
+                 style: GoogleFonts.huninn(fontSize: 16),
+               ),
+             ),
            ),
          ),
          actions: [
